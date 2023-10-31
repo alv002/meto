@@ -372,6 +372,7 @@
     
     /*
     *  u校园请求
+    *  暂未实现
     */
     class uschool_api{
         constructor(config) {
@@ -425,6 +426,7 @@
     }
     /*
     *  学堂在线请求
+    *  作者：qaing
     */
     
     class xuetangx_api{
@@ -467,6 +469,7 @@
     }
     /*
     *  mooc请求
+    *  作者：uuc（gitlab）
     */
     
     class mooc_api{
@@ -512,6 +515,7 @@
     }
     /*
     *  雨课堂请求
+    *  作者：西米露
     */
     class yuketang_api{
         constructor(config) {
@@ -666,6 +670,7 @@
     }
     /*
     *  超星请求
+    *  作者：false
     */
     class chaoxin_api{
         constructor(config) {
@@ -744,6 +749,7 @@
     
     /*
     *  国开请求
+    *  作者：false
     */
     class ouchn_api{
         constructor(config) {
@@ -953,6 +959,7 @@
     }
     /*
     *  meto请求
+    *  作者：alv002
     */
     class meto_api{
         constructor(config) {
@@ -1001,6 +1008,7 @@
     }
     /*
     *  智慧职教请求
+    *  作者：强手猎鹿
     */
     class icve_api{
         constructor(config) {
@@ -1468,16 +1476,18 @@
     }
     /*
     *  智慧树请求
+    *  作者：不愿公布
     */
     class zhihuishu_api{
         sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
         constructor(config) {
             this.config = config;
-            alert("由于智慧树官方代码被混淆加密，暂不公开源代码，\n需要使用该功能请加群获取qq群：716217812，\n或者访问https://gitee.com/xiaolv12/yunbanke/blob/master/README.md")
+            alert("由于智慧树官方代码被混淆加密，暂不公开源代码，\n需要使用该功能请加群获取qq群：945763596，\n或者访问https://github.com/alv002/meto")
         }
     }
     /*
     *  精品云班课请求
+    *  上传作者alv001
     */
     class jpyunbanke_api {
         constructor(config) {
@@ -1587,6 +1597,7 @@
 
     /*
     *  云班课请求
+    *  上传作者alv001
     */
     class yunbanke_api {
         constructor(config) {
@@ -2326,14 +2337,11 @@
                 method: "post",
                 url: window.my.ChatIP+"/api/openai/v1/chat/completions",
                 headers:{
-                    // Authorization:'Bearer nk-wangzeqing',
                     Authorization:'Bearer nk-'+window.my.config.tk_uid+","+window.my.config.poolId,
-                    // Cookie:"next-auth.csrf-token=e8b5559fadb5ce3684e9a0611591684ffffc2224d9125a49e7081a92425c3026%7C47d575638e3a14f787462c27c1fe8895d740210370848182a740fa71dfb55211; next-auth.callback-url=http%3A%2F%2Flocalhost%3A3000; next-auth.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..wNFkEP1XItcDCpY2.nJBc4rvu8_cAGx0mtDdm2pvIjPAWGMGou24L2ZzoyImrCIqLDiAMS5w6WzN6dm_8GuI331tfqxHc_V4LRoAmmFT0A8X5ln9C1iC4p47IQM_4RF2B-8iLGElCkVOYJieCkvV1lVrFHVT31nzI12n8Xpwttrw5yGhywCR3sWZ1J7sr4QCXeCA-lpOdITDyW8AdNPjH4QQ7vhtCIzjzFoepmJKk5mE2lPmksDiGrQX3d1POPwfQqdHafb8rgZJl_BC4_wDXloIt6mtTfQ4._NPSNHQIhsWS5eQprCIeCQ",
                 },
                 data: JSON.stringify(obj),
                 onloadstart: function(response) {
                     aner.text("");
-                    // console.log(response.response)
                     const reader = response.response.getReader();
                     var error_d = "";
                     function read() {

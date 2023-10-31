@@ -5,10 +5,10 @@
 // @author       alv
 // @note         请合理规划节约下来的时间，时间宝贵，不要成天rush B，OK？
 // @match        *://*/*
-// @namespace    https://gitee.com/xiaolv12/yunbanke
-// @supportURL   https://gitee.com/xiaolv12/yunbanke
-// @updateURL    https://gitee.com/xiaolv12/yunbanke/raw/master/update.user.js
-// @downloadURL  https://gitee.com/xiaolv12/yunbanke/raw/master/update.user.js
+// @supportURL   https://github.com/alv002/meto/
+// @updateURL    https://github.com/alv002/meto/
+// @updateURL    https://d.met0.top/uploads/js/update.user.js
+// @downloadURL  https://d.met0.top/uploads/js/update.user.js
 // @icon         https://bkimg.cdn.bcebos.com/pic/4ec2d5628535e5dde7114110e88eb0efce1b9c16c4e1
 // @require      https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.min.js

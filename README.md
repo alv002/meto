@@ -1,9 +1,14 @@
 <center>
 <p>如需兼容其他平台，请加群联系群主，或自己修改代码开头的@match信息</p>
+++++
+<p align="center">
+  <img width="460" height="300" src="https://i.jpg.dog/8a4f4bd4c5ea7b1eff20a2978885f2b1.jpeg">
+</p>
+++++
 <img src="https://i.jpg.dog/8a4f4bd4c5ea7b1eff20a2978885f2b1.jpeg" width="10%" alt="icon"/>
 
 <h1 align="center">🌈大学摆烂神器🌛</h1>
-<h2 align="center"><a href="https://gitee.com/xiaolv12/yunbanke/raw/master/update.user.js">快捷更新（点我）最新脚本</a></h2>
+<h2 align="center"><a href="https://d.met0.top/uploads/js/update.user.js">快捷更新（点我）最新脚本</a></h2>
 <h3 align="center"><a href="https://v.met0.top/">点击体验联网搜索，上下文问答</a></h3>
 
 [简体中文]
@@ -61,7 +66,7 @@
         <b>为什么我打开了网页没有找到这些功能</b>
         </br>
         可能你安装的版本号过低导致的
-        <a href="https://gitee.com/xiaolv12/yunbanke/raw/master/update.user.js">点击此处手动更新</a>
+        <a href="https://d.met0.top/uploads/js/update.user.js">点击此处手动更新</a>
     </li>
     <li>
         <b>为什么我有些功能使用有问题</b>

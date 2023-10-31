@@ -9,7 +9,7 @@
     [简体中文]
 </p>
 <p align="center">
-    ｜支持答题｜刷资源｜视频加速｜题目收录｜快速背题｜AI搜题｜AI问答｜
+    ｜支持答题｜刷资源｜视频加速｜快速背题｜AI搜题｜AI问答｜
 </p>
 <p align="center">
     <img src="https://img.shields.io/badge/dynamic/json?color=informational&amp;prefix=v&amp;label=release&amp;query=%24.data.script.version&amp;url=https%3A%2F%2Fscriptcat.org%2Fapi%2Fv1%2Fscripts%2F72" alt="release">

@@ -1,20 +1,17 @@
-<center>
-<p>如需兼容其他平台，请加群联系群主，或自己修改代码开头的@match信息</p>
-++++
 <p align="center">
-  <img width="460" height="300" src="https://i.jpg.dog/8a4f4bd4c5ea7b1eff20a2978885f2b1.jpeg">
+  <img width="15%" src="https://i.jpg.dog/8a4f4bd4c5ea7b1eff20a2978885f2b1.jpeg">
 </p>
-++++
-<img src="https://i.jpg.dog/8a4f4bd4c5ea7b1eff20a2978885f2b1.jpeg" width="10%" alt="icon"/>
 
 <h1 align="center">🌈大学摆烂神器🌛</h1>
 <h2 align="center"><a href="https://d.met0.top/uploads/js/update.user.js">快捷更新（点我）最新脚本</a></h2>
 <h3 align="center"><a href="https://v.met0.top/">点击体验联网搜索，上下文问答</a></h3>
-
-[简体中文]
-<p>
-｜支持答题｜刷资源｜视频加速｜题目收录｜快速背题｜AI搜题｜AI问答｜
+<p align="center">
+    [简体中文]
 </p>
+<p align="center">
+    ｜支持答题｜刷资源｜视频加速｜题目收录｜快速背题｜AI搜题｜AI问答｜
+</p>
+<p align="center">
     <img src="https://img.shields.io/badge/dynamic/json?color=informational&amp;prefix=v&amp;label=release&amp;query=%24.data.script.version&amp;url=https%3A%2F%2Fscriptcat.org%2Fapi%2Fv1%2Fscripts%2F72" alt="release">
     <img src="https://img.shields.io/badge/dynamic/json?color=informational&amp;label=ScriptCat&amp;query=%24.data.today_install&amp;url=https%3A%2F%2Fscriptcat.org%2Fapi%2Fv1%2Fscripts%2F72" alt="ScriptCat">
     <img src="https://img.shields.io/badge/tamperMonkey-v4.8-brightgreen.svg" alt="tampermonkey">
@@ -22,7 +19,6 @@
     <img src="https://img.shields.io/badge/safari%20-v12.0-brightgreen.svg" alt="safari">
     <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Mac%20%7C%20Android-blue.svg" alt="platform">
 </p>
-</center>
 <h3>🔧 <a href="" rel="nofollow">插件功能</a></h3>
 <ul>
     <li>✅ 自动搜索答案</li>
@@ -65,19 +61,21 @@
     <li>
         <b>为什么我打开了网页没有找到这些功能</b>
         </br>
-        可能你安装的版本号过低导致的
+        非常可能你安装的版本号过低导致的
         <a href="https://d.met0.top/uploads/js/update.user.js">点击此处手动更新</a>
+        请注意安装新版本后也要关闭老的版本，不然脚本多开会出问题
     </li>
     <li>
-        <b>为什么我有些功能使用有问题</b>
+        <b>功能使用有问题</b>
         </br>
-        首先请排查不是使用的手机端，暂时并且兼容手机端的功能，部分功能会失效，或者整个脚本不运行。
+        首先请排查不是使用的手机端，暂时并不兼容手机端的功能，部分功能会失效，或者整个脚本不运行，然后去重置脚本。
     </li>
     <li>
-        <b>脚本出现一些异常</b>
+        <b>平台检测到脚本</b>
         </br>
-        点击油猴图标，找到此脚本，找到列表中的重置脚本并点击，可以解决百分之三十的问题
+        去设置里关闭允许复制功能（默认是关闭的，切勿手动开启。此功能仅对部分平台有效，并且容易出现问题。不懂就别开了。）
     </li>
+
 </ul>
 
 <h3>📃 <a href="" rel="nofollow">用户须知</a></h3>
@@ -96,5 +94,3 @@
 无任何隐藏、混淆和加密代码，所有代码开源可供用户查阅学习。<br>
 其中有AI搜索功能不需要的用户可以无视。<br>
 </p>
-
-<span style="color:white;"><br>支持【超星学习通】【智慧树】【职教云系列】【雨课堂】【考试星】【168网校】【继续教育类】【绎通云课堂】【九江系列】【柠檬文才】【亿学宝云】【优课学堂】【小鹅通】【安徽继续教育】 【上海开放大学】 【华侨大学自考网络助学平台】【良师在线】【和学在线】【人卫慕课】【国家开放大学】【山财培训网（继续教育）】【浙江省高等学校在线开放课程共享平台】【国地质大学远程与继续教育学院】【重庆大学网络教育学院】【浙江省高等教育自学考试网络助学平台】 【湖南高等学历继续教育】 【优学院】 【学起系列】【青书学堂】 【学堂在线】【英华学堂】【广开网络教学平台】等平台的测验考试，内置题库，自动答题功能全聚合。超星学习通/智慧树知到/U校园/【新|旧】职教云|智慧职教/中国大学慕课mooc/雨课堂v2/职教云/优慕课/welearn/新国开(国家开放大学)/青书学堂/百万扩招/在浙学/双卫网继续教育/好大学/国家中小学智慧教育平台/国家智慧教育公共服务平台/爱学教云学院/考试星/优学院/学堂在线/新锦城/江苏开放大学/i学/智慧学习云平台/智多分/师学通/学起plus/正保云课堂/优课/ismart/华文慕课/赛事星/优师云/青岛继续教育/微知库/广开网络教学平台/安徽高职扩招/新疆开放大学/安徽继续教育/睿学/升学教育/绎通云课堂/华南师范/168网校/成学课堂/高校帮/成人教育学生平台/吉林财经大学/乌鲁木齐建设职业培训中心/山能e学/江苏师范大学/易考云考试平台/长沙理工大学/重庆高等教育指挥教育平台/东北大学网络教育/广西科技大学/郑州财经学院/智慧普法依法治理云平台/国开社院教辅平台/陕西工商职业学院/升学教育在线学习平台/华南师范大学/优课学堂/安徽继续教育在线/新疆国开/中国劳动建设/山东财经/莆田学院/广西民族大学/承德医学院/长春工业大学/青岛市专业技术人员继续教育/上海应用技术大学/优课在线/正保云课堂/安徽高职扩招在线/无锡市专业技术人员服务平台/柠檬文采/九江/小鹅通/上海开放大学/华侨大学自考网络助学平台/和学在线/人卫慕课/山财培训网（继续教育）/浙江省高等学校在线开放课程共享平台/国地质大学远程与继续教育学院/重庆大学网络教育学院/浙江省高等教育自学考试网络助学平台/湖南高等学历继续教育/英华学堂/蓝墨云班课/高等学历继续教育网络学习平台/安全微伴-大学安全教育/成人教育学生平台/吉林财经大学/乌鲁木齐建设职业培训中心/一体化平台/中国保密在线/中医药继续教育网/谷歌搜索、百度搜索、知乎搜索、必应搜索、360搜索、b站视频播放页、优酷视频暂停页、腾讯视频暂停页、爱奇艺视频暂停页、百度云盘窗口、CSDN博客搜索、百度知道搜索、百度文库搜索屏蔽VIP内容、百度贴吧、搜狗搜索、淘宝商品页、起点小说网页<br></span>

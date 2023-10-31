@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name         云上全平台🦄️支持自动答题｜题库搜｜刷资源｜刷视频｜视频加速｜快速背题｜AI搜题｜AI问答｜
 // @version      5.38
-// @description  【🐯全网免费且仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、剩余网站仅支持部分功能🚀】、【😎完美应付考试、测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【半兼容、U校园、学堂在线】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【有其他平台支持需要的请加群催更:tg群🐟https://t.me/tg_meto🐟QQ群😄716217812😄，共同交流进步，特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
+// @description  【🐯全网免费且仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、剩余网站仅支持部分功能🚀】、【😎完美应付考试、测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【半兼容、U校园、学堂在线】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【有其他平台支持需要的请加群催更:tg群🐟https://t.me/tg_meto🐟，共同交流进步，特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
 // @author       阿绿
-// @note         致谢表：@凈仙人、@💪❤、@M_、@吃土豆长大的马铃薯、@悟虚、@台灯没电了、@Pumpkin、@小陈陈陈陈啊、@Sli、@无心人、@29827*0049、@热心解答（以上均是对此脚本做出过有效BUG提交OR提供账户帮助修复OR提供好的idea，如有遗漏请告知）
 // @match        *://*.mosoteach.cn/*
 // @match        *://*.chaoxing.com/*
 // @match      	 *://*.xueyinonline.com/*
@@ -18,10 +17,10 @@
 // @match      	 *://v.met0.top/*
 // @match      	 *://*.icourse163.org/*
 // @match      	 *://*.xuetangx.com/*
-// @namespace    https://gitee.com/xiaolv12/yunbanke
-// @supportURL   https://gitee.com/xiaolv12/yunbanke
-// @updateURL    https://gitee.com/xiaolv12/yunbanke/raw/master/update.user.js
-// @downloadURL  https://gitee.com/xiaolv12/yunbanke/raw/master/update.user.js
+// @supportURL   https://github.com/alv002/meto/
+// @updateURL    https://github.com/alv002/meto/
+// @updateURL    https://d.met0.top/uploads/js/update.user.js
+// @downloadURL  https://d.met0.top/uploads/js/update.user.js
 // @icon         https://bkimg.cdn.bcebos.com/pic/4ec2d5628535e5dde7114110e88eb0efce1b9c16c4e1
 // @require      https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.min.js
@@ -34,13 +33,7 @@
 // @grant        GM_info
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
-// @connect      m.met0.top
-// @connect      v.met0.top
-// @connect      c.met0.top
-// @connect      d.met0.top
-// @connect      127.0.0.1
-// @connect      gitee.com
-// @connect      *
+// @connect      *.met0.top
 // @license      GPLv3
 // ==/UserScript==
 (function(_this) {

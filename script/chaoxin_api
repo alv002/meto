@@ -1,0 +1,78 @@
+/*
+    *  超星请求
+    *  作者：false
+    */
+    class chaoxin_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_userid(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'post',
+                    // xhrFields: {
+                    //     withCredentials: true  //允许跨域发送cookies
+                    // },
+                    url:"http://i.chaoxing.com/base",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        async get_user_obj(){
+            // let a = await this.get_userid()
+            GM_setValue("userimg",$("body").find(".user").find("img")[0].attributes.src.value||"");
+            let img_table = $('html').find("#x_set")
+            img_table.css("background","url(" +  $("body").find(".user").find("img")[0].attributes.src.value||"" + ")")
+
+            let name = $("body").find(".user").find("h3")[0].innerText
+            let id = $("body").find(".user").find("img")[0].attributes.src.value.substr(28,9)
+            this.config.user_id = "cx_"+id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "超星",
+            };
+            return obj
+        }
+        async choice_function(){
+            if(!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            for(let i=10;i;i--){
+                await this.sleep(1000)
+                console.log("开始检测页面内容"+i)
+                let video
+                if($('iframe').length){
+                    video = $('iframe').contents().find("iframe").contents().find("video")[0]
+                }
+                if(video){
+                    console.log("视频加载")
+                    video.muted = true;
+                    while(1){
+                        if(video.ended){
+                            console.log("播放结束")
+                            $("#prevNextFocusNext").click()
+                            this.choice_function() //再次循环
+                            break;
+                        }
+                        // $(".playButton").click()
+                        video.play()
+                        // let mi  = video.duration - video.currentTime
+                        // console.log(mi)
+                        await this.sleep(1000)
+                    }
+                    break;
+                }
+            }
+            $("#prevNextFocusNext").click()
+            // GM_setValue("resource_farming_state",false)
+            this.choice_function() //再次循环
+            
+        }
+
+    }

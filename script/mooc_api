@@ -1,0 +1,45 @@
+/*
+    *  mooc请求
+    *  作者：uuc（gitlab）
+    */
+    class mooc_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url: "https://www.icourse163.org/home.htm",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        async get_user_obj(){
+            // var regex = /window.webUser([\s\S]*?)};/gi;
+            // let doc = await this.get_user_inf()
+            // var matches = doc.match(regex);
+            // console.log(_this.webUser)
+            // eval(matches[0])
+            GM_setValue("userimg",_this.webUser.largeFaceUrl||"");
+            let img_table = $('html').find("#x_set")
+            img_table.css("background","url(" +  _this.webUser.largeFaceUrl||"" + ")")
+
+            let name = _this.webUser.nickName
+            let id = _this.webUser.id
+            this.config.user_id = "mooc_"+id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "mooc",
+            };
+            return obj
+        }
+    }

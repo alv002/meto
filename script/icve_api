@@ -1,0 +1,468 @@
+/*
+    *  智慧职教请求
+    *  作者：强手猎鹿
+    */
+    class icve_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    // url:"https://sso.icve.com.cn/prod-api/user/userInfo?token="+this.getCookie("token"),
+                    
+                    // success: function(res) {
+                    //     resolve(res.data);
+                    // }
+                    headers: {
+                        "Authorization":"Bearer "+this.getCookie("Token"),
+                    },
+                    url:"https://zyk.icve.com.cn/prod-api/system/user/getInfo",
+                    success: function(res) {
+                        resolve(res.user);
+                    }
+                });
+            });
+        }
+        get_user_inf1(){ //https://www.icve.com.cn/
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://www.icve.com.cn/studycenter/PersonalInfo/getUserInfo",
+                    success: function(res) {
+                        resolve(res.userInfo);
+                    }
+                });
+            });
+        }
+        getCookie(objName) {   //获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+              var temp = arrStr[i].split("=");
+              if (temp[0] == objName) return temp[1];  //解码
+            }
+            return "";
+        }
+        async get_user_obj(){
+            let user_inf={}
+            if (_this._UID_){
+                user_inf.id = _this._UID_;
+                user_inf.displayName = _this._TRUENAME_;
+            }else{
+                user_inf =  await(this.get_user_inf());
+                if(!user_inf){
+                    user_inf = await(this.get_user_inf1());
+                    if(!user_inf){
+                        return
+                    }
+                }
+            }
+            console.log(user_inf)
+            GM_setValue("userimg",user_inf.avatarUrl||"");
+            let img_table = $('html').find("#x_set")
+            img_table.css("background","url(" +  user_inf.avatarUrl||"" + ")")
+            this.config.user_id = "icve_"
+            this.config.user_id += user_inf.id||user_inf.userId||user_inf.Id;
+            this.config.full_name = user_inf.displayName|| user_inf.nickName||user_inf.DisplayName;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "智慧职教",
+            };
+            return obj
+        }
+
+        personResult(examId,taskId){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers: {
+                        "Authorization":"Bearer "+this.getCookie("Token"),
+                    },
+                    url:"https://zyk.icve.com.cn/prod-api/teacher/taskExamProblemRecord/examRecordPaperList?examId="+examId+"&taskId="+taskId+"&groupId=0",
+                    dataType:"json",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        join_class(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers: {
+                        "Authorization":"Bearer "+this.getCookie("Token"),
+                    },
+                    url:"https://zyk.icve.com.cn/prod-api/teacher/courseList/myCourseList?pageNum=1&pageSize=6&flag=1",
+                    dataType:"json",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        async get_quiz_result(examId,taskId,courseId){
+            if(!classname){
+                let classListData = await (this.join_class());
+                if(!classListData){
+                    return;
+                }
+                classListData.rows.forEach(course=>{
+                    GM_setValue(course.courseId,course.courseName);//对应课名
+                })
+                var classname = GM_getValue("clazz_course_id")
+                if(!classname){
+                    classname = courseId;
+                }
+            }
+            let res = await (this.personResult(examId,taskId));
+            var status = "error";
+            // if(res.result_code != 0){
+            //      return alert(res.result_msg);
+            // }
+            let answers = this.reset_answer(res);
+            answers.title = GM_getValue(examId)||"未命名试卷"
+            if(answers == null || JSON.stringify(answers) == '{}' ){
+                return status;
+            }
+            let obj={
+                "poolId": this.config.poolId,
+                "userId":   this.config.tk_uid,
+                "tags":[classname,answers.title,"智慧职教"],
+                "title":"zhzj_"+answers.id,
+                "problems":[],
+            };
+            let data={};
+            
+            answers.rows.forEach(row=>{
+                if(row.subject.length < 4 || row.answers == ""){
+                    console.log("题目录入有误");
+                    return; //跳出循环
+                }
+                data={
+                    "tags":     ["智慧职教"],
+                    "text":     row.subject,
+                    "answer":   JSON.stringify(row.answers),
+                };
+                data.tags.push(row.type);
+                let l = ["choice_A","choice_B","choice_C","choice_D","choice_E","choice_F","choice_G","choice_H","choice_I","choice_J","choice_K","choice_L","choice_M","choice_N","choice_O","choice_P","choice_Q","choice_R","choice_S","choice_T","choice_U","choice_V","choice_W","choice_X","choice_Y","choice_Z"];
+                let i=0;
+                row.options.forEach(option =>{
+                    data[l[i]]=option;
+                    i=i+1;
+                })
+                obj.problems.push(data);
+            });
+            if(obj.problems.length == 0){
+                return;
+            }
+            await(window.my.upladApi(window.my.MainIP+"/tiku/api/v1/problems",obj).then((resutData)=>{
+                console.log(resutData)
+                if(resutData.result=="success" && resutData.json){
+                    var data = resutData.json.data;
+                    console.log(data);
+                    GM_setValue(examId+taskId,1);
+                    status = "success"
+                }
+            }));
+            return status;
+        }
+
+        reset_answer(data){
+            let newData = {};
+            if(data ==null){
+                return console.log("并未获取到题库数据");
+            }
+            if("requestId" in data){
+                console.log("智慧职教题库重组中");
+                newData.id = data.data[0].examId;
+                newData.title = "暂无";
+                newData.rows = [];
+                data.data.forEach(row=>{
+                    let _data = {};
+                    _data.id = row.questionId;
+                    let imgs =null;
+                    try{
+                        imgs = $.parseHTML(row.title); // 去除特殊字符报错
+                    }catch (e){
+                        console.log(e);
+                    }
+                    row.title=window.my.HtmlUtil.htmlDecode(row.title);
+                    if(imgs){
+                        imgs.forEach(async function(img,index){
+                            if(img.localName == "img"){
+                                row.title += img.outerHTML;
+                            }
+                        })
+                    }
+                    // row.subject = row.subject.substr(0,500) //截断前500个字符
+                    _data.subject = row.title;
+                    _data.options = [];
+                    _data.answers = [];
+                    _data.type = row.typeName;
+                    let tmp_option =  JSON.parse(row.dataJson)
+
+                        if(row.answer){
+                            tmp_option.forEach(option=>{
+                                _data.options.push(window.my.HtmlUtil.htmlDecode(option.Content));
+                                row.answer.split(",").forEach(index=>{
+                                    if(option.SortOrder == index){
+                                        _data.answers.push(window.my.HtmlUtil.htmlDecode(option.Content));
+                                    }
+                                })
+                            
+                            });
+                        }else{
+                            if(row.isRight == true){
+                                tmp_option.forEach(option=>{
+                                    _data.options.push(window.my.HtmlUtil.htmlDecode(option.Content));
+                                    row.recordAnswer.split(",").forEach(index=>{
+                                        if(option.SortOrder == index){
+                                            _data.answers.push(window.my.HtmlUtil.htmlDecode(option.Content));
+                                        }
+                                    })
+                                
+                                });
+                            }else{
+                                _data=null;
+                            }
+                        }
+                        
+                    // }
+                    if(_data != null){
+                        newData.rows.push(_data);
+                    }
+                    
+                });
+            }else{
+                console.log(data);
+            }
+            console.log(newData)
+            return newData;
+        }
+        get_page(courseId,courseInfoId){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers: {
+                        "Authorization":"Bearer "+this.getCookie("Token"),
+                    },
+                    url:"https://zyk.icve.com.cn/prod-api/teacher/homeworkExam/answeredExamList?pageNum=1&pageSize=10&categoryId=1&flag=1&courseInfoId="+courseInfoId+"&courseId="+courseId,
+                    dataType:"json",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        async upload_all_problem(show_aner){
+            let classListData = await (this.join_class());
+            if(!classListData){
+                return;
+            }
+            classListData.rows.forEach(course=>{
+                GM_setValue(course.courseId,course.courseName);//对应课名
+            })
+            this.config.class_size = 0
+            this.config.class_length = 0
+            let aner = $('html').find("#aner")
+            if(show_aner){
+                aner.text("欢迎您的第一次使用，正在为您聚合数据中，请稍后。。。。");
+                aner.css("display","block")
+            }
+            for(let i=0;i<classListData.rows.length;i++){
+                let cl = classListData.rows[i];
+                this.get_page(cl.courseId,cl.courseInfoId).then((result) =>{
+                    result.rows.forEach(async (item)=>{
+                        if(!GM_getValue(item.id)){
+                            GM_setValue(item.id,item.name)
+                            this.config.class_length++;
+                            this.config.class_size++;
+                            try{
+                                await(this.get_quiz_result(item.id,item.taskId,cl.courseId));
+                                console.log(item.id+"upload成功")
+                            }catch{
+                                console.log(item.id+"upload失败")
+                            }
+                            this.config.class_size--;
+                            if(show_aner){
+                                aner.text("百分比长时间未动请刷新页面\n已加载："+Math.trunc((1-(this.config.class_size/this.config.class_length))*100)+"%");
+                            }
+                        }
+                    })
+
+                });
+            }
+        }
+        async start_search(){ //智慧职教搜题按钮实现
+            const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+            function random(min, max) {
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+            let HtmlUtil = window.my.HtmlUtil;
+            let aner = $('html').find("#aner")
+            aner.css("display","block")
+            aner.text("正在搜索中，请稍后")
+            let upload_paper_flag = false;
+            let answers = await(window.my.getAnswers("zhzj_"+this.config.id,true));
+            if((answers == null)||JSON.stringify(answers) == '{}'  || answers.rows.length <= 0){
+                let subjects = []
+                $('.subjectDet').each(function(index,div){
+                    let subjct_div = $(div).find('h5');
+                    let subject = $(subjct_div).text().trim();
+                    let imgs = $(subjct_div).find("img");
+                    
+                    subject=HtmlUtil.htmlDecode(subject);
+                    imgs.each(async function(index,img){
+                        if(img.outerHTML){
+                            subject += img.outerHTML;
+                        }
+                    })
+                    if(subject != ""){
+                        subjects.push(subject);
+                    }
+                   
+                })
+                answers = await(window.my.findproblems(subjects));
+                upload_paper_flag = true
+            }
+            
+            if(JSON.stringify(answers) == '{}' || !(answers.rows)){
+                aner.text("没有搜索到答案，若提前阅卷时有答案，但此时没有请反馈")
+            }else{
+                aner.text("总共搜索到"+answers.rows.length+"题")
+                answers.rows.forEach(row=>{
+                    aner.append("<hr>");
+                    aner.append("题目:"+row.subject+"<br>"+"答案:");
+                    row.answers.forEach(answer =>{        
+                         aner.append(answer+" ");
+                    });
+                });
+            }
+            let divs = $('.subjectDet');
+            for(let i=0;i<divs.length;i++){
+                let div = divs[i];
+                // let Id = $(div).find('a').attr('name');
+                //console.log($(div).find('.t-subject.t-item.moso-text.moso-editor').html());
+                let subjct_div = $(div).find('h5');
+                let subject = $(subjct_div).text().trim();
+                let imgs = $(subjct_div).find("img");
+                
+                subject=HtmlUtil.htmlDecode(subject);
+                imgs.each(async function(index,img){
+                    if(img.outerHTML){
+                        subject += img.outerHTML;
+                    }
+                })
+                if( $(div).find('.show_answer').length == 0){ //添加文字答案
+                    $(div).append("<div class='show_answer'></div>")
+                }
+                answers.rows.forEach((row,index)=>{
+                    if(row.subject == subject){
+                        if(!$(div).find('.show_answer')[0].outerText){
+                            $(div).find('.show_answer').append("答案："+JSON.stringify(row.answers)+"<br>").css('color','red'); // 添加答案在后方
+                        }else{
+                            $(div).append("第"+(i+1)+"题重复<br>").css('color','blue');
+                            $(div).find('.show_answer').append("答案："+JSON.stringify(row.answers)+"<br>").css('color','red'); // 添加答案在后方
+                        }
+                    }
+                });
+                let $options = $(div).find(".el-checkbox");
+                if($options.length == 0){
+                    $options = $(div).find('.el-radio');
+                }
+                for(let index = 0;index<answers.rows.length;index++){
+                    let row = answers.rows[index];
+                    if(row.subject != subject){
+                        continue;
+                    }
+                    if("checked" in answers.rows[index]&& answers.rows[index].checked == answers.rows[index].answers.length){
+                        continue
+                    }
+                    answers.rows[index].checked = 0;
+                    for(let i = 0;i < $options.length;i++){
+                        let label = $options[i];
+                        let content = $(label).find(".ql-editor").text()||$(label).find(".el-radio__label").text()||$(label).find(".el-checkbox__label").text();//单多选题答案获取
+                        let content_split = content.trim().substr(2);
+                        for(let j=0;j<row.answers.length;j++){
+                            let answer = row.answers[j];
+                            try{
+                                if(content == answer || content_split == answer){
+                                    if ($(label).find(".is-checked").length) {
+                                        answers.rows[index].checked +=1;
+                                        // aner.text("答案重复，请注意分辨答案。题目："+subject);
+                                        continue;
+                                    }
+                                    $(label).css('color','red');
+                                    $(label).click();
+                                    answers.rows[index].checked +=1;
+                                    await sleep(random(100,200));
+                                    break;
+                                }
+                            }catch (e){
+                                console.log("发生异常:" + e);
+                            }
+                        }
+                    }
+                };
+                
+    
+            await sleep(random(500,1000));
+            }; //结束
+            answers.rows.forEach((row,index)=>{
+                
+                if(row.checked < row.answers.length){
+                    delete answers.rows[index];
+                    return;
+                }
+                for(let q =index+1;q<answers.rows.length;q++){
+                    let row1 = answers.rows[q];
+                    if(row.subject == row1.subject){
+                        let tmp =  window.my.compareArr(row.answers,row1.answers);
+                        if(tmp == "disjoint"){
+                            return;
+                        }else if(tmp == "equal"){
+                            console.log(row.answers);
+                            console.log(row1.answers);
+                            delete answers.rows[index];
+                            return;
+                        }else if(tmp == "subset"){
+                            delete answers.rows[index];
+                            return;
+                        }else if(tmp == "superset"){
+                            delete answers.rows[q];
+                            return;
+                        }else if(tmp == "mix"){
+                            return;
+                        }else{
+                            console.log("未知"+tmp)
+                        }
+                    }
+                }
+            });
+            if(upload_paper_flag){
+                window.my.upload_papers(answers,"zhzj_"+this.config.id,"智慧职教");
+            }
+            // alert('alv');
+            this.upload_all_problem(false)
+            //题库获取模块 end    
+        }
+    }

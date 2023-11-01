@@ -1,0 +1,108 @@
+/*
+    *  精品云班课请求
+    *  上传作者alv001
+    */
+    class jpyunbanke_api {
+        constructor(config) {
+            this.config = config;
+        }
+        getNewProject(){
+            let user_inf = JSON.parse(localStorage.getItem("_user"))
+            let online_courses = this.config.front_url[4];
+            let plans = this.config.front_url[5];
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    url:"https://coreapi-proxy.mosoteach.cn/index.php/online-courses/"+online_courses+"/plans/"+plans+"/members/"+user_inf.userId,
+                    dataType:"json",
+                    headers: {
+                        "X-Token":localStorage.getItem("_token"),
+                    },
+                    success: function(res) {
+                        resolve(res.member.chapters);
+                    }
+                });
+            });
+        }
+    
+        async resource_farming(){
+            const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+            let project_obj = await(this.getNewProject())
+            let project_oid = []
+            project_obj.forEach((item)=>{
+                item.sections.forEach((item)=>{
+                    item.entities.forEach((item)=>{
+                        if(item.gainedScore == -1){
+                            project_oid.push(item.oid)
+                        }
+                    })
+                })
+            })
+            let len = project_oid.length
+            for(let i = 0;i< len;i++){
+                let result = await(this.post_read_project(project_oid[i]))
+                console.log(result)
+                if (len - i - 1 != 0) {
+                    $("#x_res").text("剩下" + (len - i - 1) + "个")
+                }else {
+                    $("#x_res").text("全部完成")
+                    location.reload()
+                    return 0
+                }
+                await sleep(1000);
+            }
+            
+        }
+        post_read_project(oid){
+            let online_courses = this.config.front_url[4];
+            let plans = this.config.front_url[5];
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'post',
+                    url:"https://coreapi-proxy.mosoteach.cn/index.php/online-courses/"+online_courses+"/plans/"+plans+"/resources/"+oid+"/read",
+                    dataType:"json",
+                    headers: {
+                        "X-Token":localStorage.getItem("_token"),
+                    },
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        async get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    url:"https://coreapi-proxy.mosoteach.cn/index.php/users/my-profile",
+                    dataType:"json",
+                    headers: {
+                        "X-Token":localStorage.getItem("_token"),
+                    },
+                    success: function(res) {
+                        resolve(res.user);
+                    }
+                });
+            });
+        }
+        async get_user_obj(){
+            let user_inf = await (this.get_user_inf());
+            if(!user_inf){
+                return;
+            }
+            GM_setValue("userimg",user_inf.fullAvatarUrl);
+            GM_setValue("user_id",user_inf.userId);
+            let img_table = $('html').find("#x_set")
+            img_table.css("background","url(" +  user_inf.fullAvatarUrl + ")")
+            this.config.user_id = user_inf.userId;
+            // console.log(this.config.user_list)
+            this.config.full_name = user_inf.fullName;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "精品云班课",
+            };
+            return obj
+        }
+    }

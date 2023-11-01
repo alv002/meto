@@ -1,0 +1,42 @@
+/*
+    *  学堂在线请求
+    *  作者：qaing
+    */
+    class xuetangx_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url: "https://www.xuetangx.com/api/v1/u/user/basic_profile/",
+                    success: function(res) {
+                        resolve(res.data);
+                    }
+                });
+            });
+        }
+        async get_user_obj(){
+            let user_inf = await this.get_user_inf()
+            console.log(user_inf)
+            GM_setValue("userimg",user_inf.avatar||"");
+            let img_table = $('html').find("#x_set")
+            img_table.css("background","url(" + user_inf.avatar||"" + ")")
+
+            let name = user_inf.nickname
+            let id = user_inf.user_id
+            this.config.user_id = "xtzx_"+id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "学堂在线",
+            };
+            return obj
+        }
+    }

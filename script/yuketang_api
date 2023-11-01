@@ -1,0 +1,155 @@
+/*
+    *  雨课堂请求
+    *  作者：西米露
+    */
+    class yuketang_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url: "https://"+this.config.front_url[2]+"/edu_admin/get_user_basic_info",
+                    success: function(res) {
+                        resolve(res.data.user_info);
+                    }
+                });
+            });
+        }
+        get_user_inf1(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url: "https://"+this.config.front_url[2]+"/v2/api/web/userinfo",
+                    success: function(res) {
+                        resolve(res.data[0]);
+                    }
+                });
+            });
+        }
+        async get_user_obj(){
+            let user_inf = await this.get_user_inf() || await this.get_user_inf1()
+            GM_setValue("userimg",user_inf.avatar||"");
+            let img_table = $('html').find("#x_set")
+            img_table.css("background","url(" +  user_inf.avatar||"" + ")")
+
+            let name = user_inf.name
+            let id = user_inf.user_id
+            this.config.user_id = "ykt_"+id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "雨课堂",
+            };
+            return obj
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        // 创建一个 PointerEvent 对象
+        pointerEvent = new PointerEvent("pointerdown", {
+            bubbles: true,
+            cancelable: true,
+            pointerId: 1, // 指针 ID
+            pointerType: "mouse", // 指针类型
+            clientX: 100, // 指针在视口中的 X 坐标
+            clientY: 100, // 指针在视口中的 Y 坐标
+        });
+        async choice_function(){
+            if(!GM_getValue("resource_farming_state")&&!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            for(let i=10;i;i--){
+                console.log($(".activity-content").text().length)
+                await this.sleep(1000)
+                if($("video").length&&$("video")[0].duration){
+                    console.log("视频加载")
+                    let video = $("video")[0]
+                    
+                    document.hasFocus = ()=> {
+                        return true
+                    }
+                    await this.sleep(2000)
+                    $(".xt_video_player_common_icon").click()
+                    
+
+                    while(1){
+                        
+                        if(video.ended||$(".text").text().substr(-4,4)=="100%"){
+                            break;
+                        }
+                        await this.sleep(1000)
+                        video.muted = true;
+                        $(".xt_video_bit_play_btn").click()
+                        $(".xt_video_bit_play_btn")[0].dispatchEvent(this.pointerEvent);
+                        
+                    }
+                    
+                    break;
+                }
+            }
+            
+            await this.sleep(1000)
+            GM_setValue("resource_farming_state",false)
+            if(GM_getValue("resource_farming_main_state")){
+                $(".btn-next").click()
+            }else{
+                window.close();
+            }
+            
+        }
+        async resource_farming(){
+            
+            let activity_list=[]
+            let divs = $(".leaf-detail")
+            divs.each((index,div)=>{
+                if($(div).find(".icon--shipin").length && $(div).find(".el-tooltip").text()!="已完成" ){
+                    activity_list.push(div)
+                }
+            })
+            divs = $(".right-content")[0] ||[]//雨课堂main site
+            $(divs).find(".study-unit").each((index,div)=>{
+                if($(div).find("span")[1].innerHTML.trim() !="已完成"){
+                    activity_list.push($(div).find(".name-text"))
+                }
+            })
+            
+
+            if(activity_list.length){
+                console.log(activity_list.length)
+            }else{
+                window.my.aner.show("slow")
+                window.my.aner.text("未检测到页面资源，请等待页面加载完毕。 ")
+                window.my.aner.append("</br>若未展开资源，请点击全部展开。")
+                window.my.aner.append("</br>或者进入成绩单页面，再次点击。")
+                $("#x_res").attr("disabled", false)
+                $("#tab-student_school_report").click()
+                return
+            }
+            window.my.aner.show("slow")
+            window.my.aner.text("部分浏览器默认关闭弹出窗口，请在右上角开启")
+            
+            // return
+            for(let i =0;i<activity_list.length;i++){
+                GM_setValue("resource_farming_state",true)
+                activity_list[i].click()
+                while(1){
+                    if(GM_getValue("resource_farming_state")){
+                        $("#x_res").text("剩余"+(activity_list.length - i)+"资源")
+                        await this.sleep(1000)
+                    }else{
+                        break
+                    }
+                }
+                
+            }
+            $("#x_res").text("全部完成")
+        }
+    }

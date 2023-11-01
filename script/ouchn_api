@@ -1,0 +1,210 @@
+/*
+    *  国开请求
+    *  作者：false
+    */
+    class ouchn_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_userid(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://lms.ouchn.cn/user/settings",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        // get_user_inf(){
+        //     return new Promise((resolve,rejcet)=>{
+        //         $.ajax({
+        //             type: 'GET',
+        //             xhrFields: {
+        //                 withCredentials: true  //允许跨域发送cookies
+        //             },
+        //             url:"https://lms.ouchn.cn/api/user/20000797261/accounts",
+        //             success: function(res) {
+        //                 resolve(res[0]);
+        //             }
+        //         });
+        //     });
+        // }
+        async get_user_obj(){
+            // let a = await this.get_userid()
+            // a = $(a)
+            // eval(a.find("script")[0])
+            // console.log(globalData)
+            // let user_inf = await(this.get_user_inf());
+            // if(!user_inf){
+            //     return;
+            // }
+            // console.log(user_inf)
+            let user_inf = _this.globalData.user
+            // GM_setValue("userimg",user_inf.avatarUrl||"");
+            // let img_table = $('html').find("#x_set")
+            // img_table.css("background","url(" +  user_inf.avatarUrl||"" + ")")
+            this.config.user_id = "gk_"+user_inf.id
+            this.config.full_name = user_inf.name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "国开",
+            };
+            return obj
+        }
+
+        get_activity_reads(course){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://lms.ouchn.cn/api/course/"+course+"/activity-reads-for-user",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        get_completeness(course){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://lms.ouchn.cn/api/course/"+course+"/my-completeness",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        get_models(course){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://lms.ouchn.cn/api/courses/"+course+"/modules",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        get_all_activities(course,str){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://lms.ouchn.cn/api/course/"+course+"/all-activities?module_ids="+str,
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        async choice_function(){
+            if(!GM_getValue("resource_farming_state")&&!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            for(let i=10;i;i--){
+                console.log($(".activity-content").text().length)
+                await this.sleep(1000)
+                if($(".activity-content").find(".text-too-long").length){
+                    console.log("检测到ppt按钮")
+                    $(".activity-content").find(".text-too-long").click()
+                    break;
+                }else if($(".join-button").length){
+                    console.log("课堂直播")
+                    break;
+                }else if($("video").length&&$("video")[0].duration){
+                    console.log("视频加载")
+                    let video = $("video")[0]
+                    video.muted = true;
+                    while(1){
+                        if(video.ended){
+                            break;
+                        }
+                        $(".mvp-fonts-play").click()
+                        // let mi  = video.duration - video.currentTime
+                        // console.log(mi)
+                        await this.sleep(1000)
+                    }
+                    
+                    break;
+                }else if($(".activity-content").find(".page-box").length){
+                    console.log("文章加载")
+                    break;
+                }else if($(".exam-activity-box").length){
+                    console.log("测试题加载")
+                    await this.sleep(1000)//测试题box加载过快，可能导致没有下一个
+                    break;
+                }
+                
+                
+                
+            }
+            
+            await this.sleep(1000)
+            GM_setValue("resource_farming_state",false)
+            $(".next-btn").click()
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        async resource_farming(){
+            let course = this.config.front_url.at(4)
+            let url = "https://lms.ouchn.cn/course/"+course+"/learning-activity/full-screen#/"
+            let activity_list=[]
+            let divs = $(".learning-activity")
+            divs.each((index,div)=>{
+                let type = $(div).find(".activity-summary").attr("ng-switch-when")
+                if($(div).find(".completeness").attr("class") != "completeness full" && type != "exam"&& type != "forum" &&type != "homework"){
+                    try{
+                        var id = $(div).attr("id").substr(18)
+                    }catch{
+                        return
+                    }
+                    activity_list.push(id)
+                }
+            })
+            if(activity_list.length){
+                console.log(activity_list)
+            }else{
+                window.my.aner.show("slow")
+                window.my.aner.text("未检测到页面资源，请等待页面加载完毕。 ")
+                window.my.aner.append("</br>若未展开资源，请点击全部展开。")
+                $("#x_res").attr("disabled", false)
+                return
+            }
+            window.my.aner.show("slow")
+            window.my.aner.text("部分浏览器默认关闭弹出窗口，请在右上角开启")
+            
+            // return
+            for(let i =0;i<activity_list.length;i++){
+                GM_setValue("resource_farming_state",true)
+                let childwindow = window.open(url+activity_list[i], "_blank")
+                while(1){
+                    if(GM_getValue("resource_farming_state")){
+                        $("#x_res").text("剩余"+(activity_list.length - i)+"资源")
+                        await this.sleep(1000)
+                    }else{
+                        childwindow.close()
+                        break
+                    }
+                }
+                
+            }
+            $("#x_res").text("全部完成")
+        }
+    }

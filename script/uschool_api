@@ -1,0 +1,54 @@
+/*
+    *  u校园请求
+    *  暂未实现
+    */
+    class uschool_api{
+        constructor(config) {
+            this.config = config;
+        }
+        getCookie(objName) {   //获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+              var temp = arrStr[i].split("=");
+              if (temp[0] == objName) return temp[1];  //解码
+            }
+            return "";
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: "https://ucamapi.unipus.cn/rpc/api/user-info/brief?source=0&callback=window.user_inf=&openId="+this.getCookie("ucamUserId"),
+                    onload: res=> {
+                        resolve(res.response);
+                    },
+                    onerror:err=>{
+                        console.log("加载失败")
+                    }
+                })
+            })
+            
+        }
+        async get_user_obj(){
+            //由于此处带有eval函数，会触发gre的代码保护，所以直接return了。
+            return 
+            // var regex = /window.webUser([\s\S]*?)};/gi;
+            let script = await this.get_user_inf()
+            // var matches = doc.match(regex);
+            // eval(script)
+            // GM_setValue("userimg",window.webUser.largeFaceUrl||"");
+            // let img_table = $('html').find("#x_set")
+            // img_table.css("background","url(" +  window.webUser.largeFaceUrl||"" + ")")
+            let name = window.user_inf.result.name
+            let id = window.user_inf.result.phone
+            this.config.user_id = "uschool"+id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "uschool",
+            };
+            return obj
+        }
+    }

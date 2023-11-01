@@ -1,0 +1,49 @@
+/*
+    *  meto请求
+    *  作者：alv002
+    */
+    class meto_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url:"https://v.met0.top/api/user",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        async get_user_obj(){
+            let user_inf = await(this.get_user_inf());
+            if(!user_inf){
+                return;
+            }
+            this.config.tk_uid = user_inf.id;
+            this.config.pp = user_inf.sal;
+            this.config.user_id = user_inf.user.email
+            this.config.poolId = CryptoJS.MD5(CryptoJS.MD5(this.config.user_id).toString() + this.config.pp).toString();
+            this.config.poolId = this.config.poolId.slice(0,8)+"-"+this.config.poolId.slice(8,12)+"-"+this.config.poolId.slice(12,16)+"-"+this.config.poolId.slice(16,20)+"-"+this.config.poolId.slice(20,32)
+            GM_setValue("poolId",this.config.poolId);
+            GM_setValue("ti_uid",this.config.tk_uid);
+            
+            // GM_setValue("userimg",user_inf.avatarUrl||"");
+            // let img_table = $('html').find("#x_set")
+            // img_table.css("background","url(" +  user_inf.avatarUrl||"" + ")")
+            
+            this.config.full_name = user_inf.name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": "",
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "meto",
+            };
+            return obj
+        }
+    }

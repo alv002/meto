@@ -1,26 +1,11 @@
 // ==UserScript==
 // @name         云上全平台🦄️支持自动答题｜题库搜｜刷资源｜刷视频｜视频加速｜快速背题｜AI搜题｜AI问答｜
-// @version      5.38
-// @description  【🐯全网免费且仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、剩余网站仅支持部分功能🚀】、【😎完美应付考试、测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【半兼容、U校园、学堂在线】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【有其他平台支持需要的请加群催更:tg群🐟https://t.me/tg_meto🐟，共同交流进步，特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
+// @version      5.3.9
+// @description  【🐯全网免费仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、山东专技、西财在线剩余网站仅支持部分功能🚀】【半兼容、绎通云、U校园、学堂在线】、【😎完美应付测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【如有平台不可用请进入:qq频道🌈03b6e74rkp🌈tg群🐟tg_meto🐟qq群😄835306493😄，共同交流进步】【特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
 // @author       阿绿
-// @match        *://*.mosoteach.cn/*
-// @match        *://*.chaoxing.com/*
-// @match      	 *://*.xueyinonline.com/*
-// @match        *://*.edu.cn/*
-// @match        *://*.ouchn.cn/*
-// @match        *://*.nbdlib.cn/*
-// @match        *://*.hnsyu.net/*
-// @match        *://*.gdhkmooc.com/*
-// @match        *://*.zhihuishu.com/*
-// @match      	 *://*.icve.com.cn/*
-// @match      	 *://*.yuketang.cn/*
-// @match      	 *://v.met0.top/*
-// @match      	 *://*.icourse163.org/*
-// @match      	 *://*.xuetangx.com/*
+// @match        *://*/*
 // @supportURL   https://github.com/alv002/meto/
 // @updateURL    https://github.com/alv002/meto/
-// @updateURL    https://d.met0.top/uploads/js/update.user.js
-// @downloadURL  https://d.met0.top/uploads/js/update.user.js
 // @icon         https://bkimg.cdn.bcebos.com/pic/4ec2d5628535e5dde7114110e88eb0efce1b9c16c4e1
 // @require      https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.min.js
@@ -33,32 +18,38 @@
 // @grant        GM_info
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
-// @connect      *.met0.top
+// @connect      met0.top
+// @connect      met0.cn
+// @connect      chaoxing.com
+// @connect      unipus.cn
+// @connect      *
 // @license      GPLv3
 // ==/UserScript==
-(function(_this) {
-    _this.GM_setValue = GM_setValue;
 
-    // let $ = window.y$ ||document.getElementById("yl_8").onclick; // 此处为避免原生网页没有jquery
+
+;(function(_this) {
+    let $ = document.getElementById("yl_8") && document.getElementById("yl_8").onclick ||jQuery; // 此处为避免原生网页没有jquery
+    _this.y$ = $
+    _this.GM_setValue = GM_setValue
     function MyPage(menu){
-        // time = Math.floor(Date.now()/10000);
-        // time = time %16;
-        // console.log(time)
-        // // this.axios = _this.axios;
-        // // this.Qs =Qs;
-        // this.MainIP = "http://localhost:10086"
-        // this.ChatIP = "http://localhost:3000"
         this.aner = null;
         this.MainIP = "http://m.met0.top"
+        this.SpareIP ="http://b.met0.top"
         this.ChatIP = "https://v.met0.top"
-        this.SpareIP ="https://d.met0.top"
-        this.version="5.2";
+        this.ShopIP ="https://d.met0.top"
+        this.version="5.3.9";
         this.$ = $;
         this.menu = menu;
         this.config = this.urlToObject(window.location.href);
-        this.api = this.getAPI(this.config.hostname);
         this.config.tk_uid =null;
+        this.api = this.getAPI(this.config.hostname);
+        if(!this.api){
+            console.log("并未匹配到页面")
+            return
+        }
         this.initMenu();
+        this.initData();
+        this.prival_global();
         // this.initVue();
         return this;
     }
@@ -66,32 +57,47 @@
         let obj = {};
         let arr1 = url.split("?");
         obj["front_url"] = arr1[0].split("/");
-        if(url.includes('mooc.mosoteach.cn')){
+        let domain = obj["front_url"][2]
+        if(domain.includes('mooc.mosoteach.cn')){
             obj.hostname = "mooc.mosoteach";
-        }else if(url.includes('mosoteach.cn')){
+        }else if(domain.includes('mosoteach.cn')){
             obj.hostname = "mosoteach";
-        }else if(url.includes("zhihuishu.com")){
+        }else if(domain.includes("zhihuishu.com")){
             obj.hostname = "zhihuishu";
-        }else if(url.includes("icve.com.cn")){
+        }else if(domain.includes("icve.com.cn")){
             obj.hostname = "icve";
-        }else if(url.includes("met0.top")){
+        }else if(domain.includes("met0.top")){
             obj.hostname = "meto";
-        }else if(url.includes("ouchn.cn")){
+        }else if(domain.includes("ouchn.cn")){
             obj.hostname = "ouchn";
-        }else if(url.includes("chaoxing.com")){
+        }else if(domain.includes("chaoxing.com")){
             obj.hostname = "chaoxing";
-        }else if(url.includes("yuketang.cn")){
+        }else if(domain.includes("yuketang.cn")){
             obj.hostname = "yuketang";
-        }else if(url.includes("icourse163")){
+        }else if(domain.includes("icourse163")){
             obj.hostname = "mooc";
-        }else if(url.includes("unipus.cn")){
+        }else if(domain.includes("unipus.cn")){
             obj.hostname = "uschool";
-        }else if(url.includes("xuetangx.com")){
+        }else if(domain.includes("xuetangx.com")){
             obj.hostname = "xuetangx";
+        }else if(domain.includes("ytccr.com")){
+            obj.hostname = "ytccr";
+        }else if(domain.includes("treewises.com")){
+            obj.hostname = "sdzj";
+        }else if(domain.includes("swufe-online.com")){
+            obj.hostname = "xczx";
         }
+        
        
         if(arr1[1]){
             let arr2 = arr1[1].split("&");
+            for(let i=0;i<arr2.length;i++){
+                let res = arr2[i].split("=");
+                obj[res[0]]=res[1];
+            }
+        }
+        if(arr1[2]){
+            let arr2 = arr1[2].split("&");
             for(let i=0;i<arr2.length;i++){
                 let res = arr2[i].split("=");
                 obj[res[0]]=res[1];
@@ -134,6 +140,15 @@
             case "xuetangx":
                 console.log("学堂在线脚本准备中");
                 return new xuetangx_api(this.config);
+            case "ytccr":
+                console.log("绎通云脚本准备中");
+                return new ytccr_api(this.config);
+            case "sdzj":
+                console.log("山东专技脚本准备中");
+                return new sdzj_api(this.config);
+            case "xczx":
+                console.log("西财在线脚本准备中");
+                return new xczx_api(this.config);
             default:
                 return null;
         }
@@ -156,12 +171,19 @@
         return hexString;
     }
     MyPage.prototype.video_spend=function () {
-        $('#zhu').append("<button id='x_spend' ><span>视频速率</span></button>");
+        
+        
+        if(window.my.config.hostname=="zhihuishu"){
+            GM_setValue("video_spend",1)
+            return
+        }else{
+            $('#zhu').append("<button id='x_spend' ><span>视频速率</span></button>");
+        }
         $("video").each((index,item)=>{
             item.playbackRate = GM_getValue("video_spend")||1;
         })
         $("#x_spend").click(()=>{
-            var userInput = window.prompt("请注意有些平台有速率检测（如智慧树）,如被检测请保持默认\n部分平台发现观看速度过快会打回\n请输入您需要修改的速率(一般平台可支持:0-16倍速率，1为正常速率)", GM_getValue("video_spend")||1)||1;
+            var userInput = window.prompt("请注意有些平台有速率检测,如被检测请保持默认\n部分平台发现观看速度过快会打回\n请输入您需要修改的速率(一般平台可支持:0-16倍速率，1为正常速率)", GM_getValue("video_spend")||1)||1;
             GM_setValue("video_spend",userInput)
             $("video").each((index,item)=>{
                 item.playbackRate = userInput;
@@ -177,6 +199,11 @@
     //     });
     // }
     MyPage.prototype.upladApi = function(url,data){
+        let domain = this.MainIP;
+        // if(GM_getValue("choice_server")){//切换服务器
+        //     domain = this.SpareIP;
+        // }
+        url = domain+url;
         if(!GM_getValue("time_error_rate")){
             GM_setValue("time_error_rate",0)
         }
@@ -203,7 +230,8 @@
                     try{
                         var responseText = JSON.parse(response.responseText);
                     }catch{
-                        let aner = $('html').find("#aner")
+                        let aner = $('html').find("#aner");
+                        // GM_setValue("choice_server",!GM_getValue("choice_server"));
                         aner.text("服务器数据获取失败,请尝试切换网络");
                         // aner.append("<br>ti_uid="+GM_getValue("ti_uid") +"<br>pp="+GM_getValue("pp") +"<br>poolId="+GM_getValue("poolId"));
                         aner.css("display","block");
@@ -256,14 +284,18 @@
 				    }
                 },
                 onerror : function(err){
-                    console.log('error')
-                    console.log(err)
-                    let aner = $('html').find("#aner")
-                    aner.css("display","block")
-                    aner.text("无法连接到服务器，请尝试更换网络，需要可以访问http://d.met0.top");
+                    if(url != domain+"/tiku/api/v1/problems"){
+                        console.log('error')
+                        console.log(err)
+                        // GM_setValue("choice_server",!GM_getValue("choice_server"));
+                        let aner = $('html').find("#aner")
+                        aner.css("display","block")
+                        aner.text("无法连接到服务器,请尝试更换网络，需要可以访问http://d.met0.top");
+                    }
                 },
                 ontimeout : function(inf){
-                    if(url != this.MainIP+"/tiku/api/v1/problems"){
+                    if(url != domain+"/tiku/api/v1/problems"){
+                        // GM_setValue("choice_server",!GM_getValue("choice_server"));
                         console.log('请求超时')
                         console.log(inf)
                         let aner = $('html').find("#aner")
@@ -364,8 +396,243 @@
 
     
     /*
+    *  西财在线请求
+    */
+    class xczx_api{
+        constructor(config) {
+            this.config = config;
+        }
+
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[4] =="learn"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }
+            else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        async choice_function(){
+            if(!GM_getValue("resource_farming_state")&&!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            var divIframe
+            for(let i=20;i;i--){
+                console.log("检测视频loading")
+                await this.sleep(1000)
+                divIframe = $("iframe").contents()
+                let videoIframe = $("iframe").contents().find("iframe").contents()
+                if(videoIframe.find("video").length&&videoIframe.find("video")[0].duration){
+                    console.log("视频加载")
+                    let video = videoIframe.find("video")[0]
+                    // $(".xt_video_player_common_icon").click()
+                    while(1){
+                        video = videoIframe.find("video")[0]
+                        if(!video){
+                            location.reload()
+                        }
+                        if(video.ended){
+                            console.log("video finsh")
+                            let flag = false;
+                            divIframe.find(".s_point").each((index,div)=>{
+                                if($(div).find(".item_done_icon.item_done_pos").attr("class") != 'item_done_icon item_done_pos done_icon_show' && $(div).find(".s_learn_video").length&&!flag){
+                                    div.click()
+                                    flag = true
+                                    this.choice_function();
+                                }
+                            })
+                            break;
+                        }
+                        video.muted = true;
+                        videoIframe.find(".screen-player-btn-icon.icon-play-sp-fill").click()
+                        await this.sleep(4000)
+                    }
+                    break;
+                }
+            }
+            
+            await this.sleep(1000)
+            GM_setValue("resource_farming_state",false)
+            if(GM_getValue("resource_farming_main_state")){
+                let flag = false;
+                divIframe.find(".s_point").each((index,div)=>{
+                    if($(div).find(".item_done_icon.item_done_pos").attr("class") != 'item_done_icon item_done_pos done_icon_show' && $(div).find(".s_learn_video").length&&!flag){
+                        div.click()
+                        flag = true
+                        this.choice_function();
+                    }
+                })
+            }else{
+                window.close();
+            }
+            
+        }
+    }
+
+    /*
+    *  山东专技请求
+    */
+     class sdzj_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url: "https://sdzz-train.treewises.com/api/login/get-account-info.gson",
+                    success: function(res) {
+                        resolve(res.attribute.cmsAccountInfo);
+                    }
+                });
+            })
+            
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[3] =="learning"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }
+            else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        async choice_function(){
+            if(!GM_getValue("resource_farming_state")&&!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            for(let i=10;i;i--){
+                console.log("检测视频loading")
+                await this.sleep(1000)
+                if($("video").length&&$("video")[0].duration){
+                    console.log("视频加载")
+                    let video = $("video")[0]
+                    document.hasFocus = ()=> {
+                        return true
+                    }
+                    await this.sleep(2000)
+                    // $(".xt_video_player_common_icon").click()
+                    while(1){
+                        if(video.ended){
+                            $(".course-spend").each((index,div)=>{
+                                if(div.innerHTML!='100.0%'){
+                                    div.click()
+                                    this.choice_function()
+                                }
+                            })
+                            break;
+                            
+                        }
+                        await this.sleep(1000)
+                        video.muted = true;
+                        $("#replaybtn").click()//播放按钮1
+                        $(".bplayer-play-btn").click() //播放按钮2
+                        let div = $(".ccQuestion").find("li"); //第一个答题验证
+                        while(div.length){
+                            var randElement = div[Math.floor(Math.random() * div.length)];
+                            randElement.click()
+                            $("#ccQuestionSubmit").click()
+                            if($("#rightBtn").length){
+                                $("#rightBtn").click()
+                                break;
+                            }
+                            await this.sleep(100)
+                        }
+                        div = $(".bplayer-question-content").find(".option-item"); //第二个答题验证
+                        while(div.length && div.attr("style") != 'display: none;'){
+                            var randElement = div[Math.floor(Math.random() * div.length)];
+                            randElement.click()
+                            $(".commit.bplayer-btn").click()
+                            $(".complete.bplayer-btn").click()
+                            $(".commit.bplayer-btn").click()
+                            
+                            // if($("#rightBtn").length){
+                            //     $("#rightBtn").click()
+                            //     break;
+                            // }
+                            await this.sleep(100)
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            await this.sleep(1000)
+            GM_setValue("resource_farming_state",false)
+            if(GM_getValue("resource_farming_main_state")){
+                $(".btn-next").click()
+            }else{
+                window.close();
+            }
+            
+        }
+    }
+
+    
+    /*
+    *  绎通云请求
+    */
+    class ytccr_api{
+        constructor(config) {
+            this.config = config;
+        }
+        getCookie(objName) {   //获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+              var temp = arrStr[i].split("=");
+              if (temp[0] == objName) return temp[1];  //解码
+            }
+            return "";
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers: {
+                        "Authorization":"Bearer "+this.getCookie("token"),
+                    },
+                    url: "https://dadexs.ytccr.com/org_student_api/yt/student/myStudentInfo/getInfo",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            })
+            
+        }
+
+    }
+    /*
     *  u校园请求
-    *  暂未实现
     */
     class uschool_api{
         constructor(config) {
@@ -380,6 +647,7 @@
             return "";
         }
         get_user_inf(){
+            alert("即将发送一个请求信息，点击仅获取一次即可\n此请求信息是为了获取用户ID，否则进行手动登录也可");
             return new Promise((resolve,rejcet)=>{
                 GM_xmlhttpRequest({
                     method: "GET",
@@ -394,32 +662,45 @@
             })
             
         }
-        async get_user_obj(){
-            //由于此处带有eval函数，会触发gre的代码保护，所以直接return了。
-            return 
-            // var regex = /window.webUser([\s\S]*?)};/gi;
-            let script = await this.get_user_inf()
-            // var matches = doc.match(regex);
-            // eval(script)
-            // GM_setValue("userimg",window.webUser.largeFaceUrl||"");
-            // let img_table = $('html').find("#x_set")
-            // img_table.css("background","url(" +  window.webUser.largeFaceUrl||"" + ")")
-            let name = window.user_inf.result.name
-            let id = window.user_inf.result.phone
-            this.config.user_id = "uschool"+id
-            this.config.full_name = name;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "uschool",
-            };
-            return obj
-        }
+        // get_user_inf(){
+        //     alert("即将发送一个请求信息，点击仅获取一次即可\n此请求信息是为了获取用户ID，否则进行手动登录也可");
+        //     return new Promise((resolve,rejcet)=>{
+        //         GM_xmlhttpRequest({
+        //             method: "GET",
+        //             url: "https://ucontent.unipus.cn/auth/api/user",
+        //             onload: res=> {
+        //                 resolve(res.response);
+        //             },
+        //             onerror:err=>{
+        //                 console.log("加载失败")
+        //             }
+        //         })
+        //     })
+            
+        // }
+        // async get_user_obj(){
+        //     // var regex = /window.webUser([\s\S]*?)};/gi;
+        //     let script = await this.get_user_inf()
+        //     // var matches = doc.match(regex);
+        //     eval(script)
+        //     // GM_setValue("userimg",window.webUser.largeFaceUrl||"");
+        //     // let img_table = $('html').find("#x_set")
+        //     // img_table.css("background","url(" +  window.webUser.largeFaceUrl||"" + ")")
+        //     let name = window.user_inf.result.name
+        //     let id = window.user_inf.result.id
+        //     this.config.user_id = "uschool_"+id
+        //     this.config.full_name = name;
+        //     let obj={
+        //         "unionid": this.config.user_id,
+        //         "username": this.config.full_name,
+        //         "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+        //         "grade": "uschool",
+        //     };
+        //     return obj
+        // }
     }
     /*
     *  学堂在线请求
-    *  作者：qaing
     */
     
     class xuetangx_api{
@@ -440,35 +721,55 @@
                 });
             });
         }
-        async get_user_obj(){
-            let user_inf = await this.get_user_inf()
-            console.log(user_inf)
-            GM_setValue("userimg",user_inf.avatar||"");
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" + user_inf.avatar||"" + ")")
 
-            let name = user_inf.nickname
-            let id = user_inf.user_id
-            this.config.user_id = "xtzx_"+id
-            this.config.full_name = name;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "学堂在线",
-            };
-            return obj
-        }
     }
     /*
     *  mooc请求
-    *  作者：uuc（gitlab）
     */
     
     class mooc_api{
         constructor(config) {
             this.config = config;
         }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[this.config.front_url.length-1] =="studycontent"||this.config.front_url[this.config.front_url.length-2]=="studentLog"){
+                GM_setValue("resource_farming_state",false) //    跨域访问，清空默认状态
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else{
+                // let a = await this.get_ansers()
+                // console.log(a)
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+        getCookie(objName) {   //获取指定名称的cookie的值
+            var arrStr = document.cookie.split("; ");
+            for (var i = 0; i < arrStr.length; i++) {
+              var temp = arrStr[i].split("=");
+              if (temp[0] == objName) return temp[1];  //解码
+            }
+            return "";
+        }
+        get_ansers(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'post',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    data:{
+                        aid: 2698276550,
+                        tid: "1241795540",
+                        withStdAnswerAndAnalyse: true
+                    },
+                    url: "https://www.icourse163.org/web/j/mocQuizRpcBean.getOpenQuizPaperDto.rpc?csrfKey="+this.getCookie("NTESSTUDYSI"),
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+
         get_user_inf(){
             return new Promise((resolve,rejcet)=>{
                 $.ajax({
@@ -483,36 +784,216 @@
                 });
             });
         }
-        async get_user_obj(){
-            // var regex = /window.webUser([\s\S]*?)};/gi;
-            // let doc = await this.get_user_inf()
-            // var matches = doc.match(regex);
-            // console.log(_this.webUser)
-            // eval(matches[0])
-            GM_setValue("userimg",_this.webUser.largeFaceUrl||"");
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" +  _this.webUser.largeFaceUrl||"" + ")")
 
-            let name = _this.webUser.nickName
-            let id = _this.webUser.id
-            this.config.user_id = "mooc_"+id
-            this.config.full_name = name;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "mooc",
-            };
-            return obj
-        }
     }
     /*
     *  雨课堂请求
-    *  作者：西米露
     */
     class yuketang_api{
         constructor(config) {
             this.config = config;
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[this.config.front_url.length-1] =="studycontent"||this.config.front_url[this.config.front_url.length-2] =="studentLog"){
+                GM_setValue("resource_farming_state",false) //    跨域访问，清空默认状态
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else if(this.config.front_url[this.config.front_url.length-2] =="video" || this.config.front_url[this.config.front_url.length-3] =="video-student"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }else if(this.config.front_url[7] == "exercise"){
+                // this.aner.css("display","block")
+                // this.aner.text("正在导入题库中");
+                if(!GM_getValue(this.config.id)){
+                    let flag =  await(this.get_quiz_result(this.config.front_url[8],this.config.front_url[9]));
+                    if(flag == "success"){
+                        this.aner.text("题库导入成功");
+                    }else{
+                        // this.aner.text("题库导入失败");
+                    }
+                }else{
+                    this.aner.text("题库已存在");
+                }
+            }else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+        get_exercise_list(classId,paperId){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers:{
+                        "Classroom-Id":classId,//this.config.front_url[8],
+                        "Xtbz":"ykt",
+                    },
+                    url: "https://"+this.config.front_url[2]+"/mooc-api/v1/lms/exercise/get_exercise_list/"+paperId+"/",
+                    success: function(res) {
+                        resolve(res.data);
+                    }
+                });
+            });
+        }
+        get_leaf_info(classId,id){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers:{
+                        "Classroom-Id":classId,
+                        "Xtbz":"ykt",
+                    },
+                    url: "https://"+this.config.front_url[2]+"/mooc-api/v1/lms/learn/leaf_info/"+classId+"/"+id+"/",
+                    success: function(res) {
+                        resolve(res);
+                    }
+                });
+            });
+        }
+        reset_answer(data){
+            let newData = {};
+            if(data ==null){
+                return console.log("并未获取到题库数据");
+            }
+            if("problems" in data){
+                console.log("雨课堂题库重组中");
+                newData.id = data.exercise_id;
+                newData.title = data.name;
+                newData.rows = [];
+                data.problems.forEach(row=>{
+                    let _data = {};
+                    _data.id = row.content.ProblemID;
+                    let imgs =null;
+                    try{
+                        imgs = $.parseHTML(row.content.Body); // 去除特殊字符报错
+                    }catch (e){
+                        console.log(e);
+                    }
+                    row.title=window.my.HtmlUtil.htmlDecode(row.content.Body);
+                    if(imgs){
+                        imgs.forEach(async function(img,index){
+                            if(img.localName == "img"){
+                                row.title += img.outerHTML;
+                            }
+                        })
+                    }
+                    // row.subject = row.subject.substr(0,500) //截断前500个字符
+                    _data.subject = row.title;
+                    _data.options = [];
+                    _data.answers = [];
+                    _data.type = row.content.TypeText;
+                    let tmp_option =  row.content.Options
+                        if(row.user.is_show_answer){
+                            tmp_option.forEach(option=>{
+                                _data.options.push(window.my.HtmlUtil.htmlDecode(option.value));
+                                if(typeof(row.user.answer) == 'string'){
+                                    if(option.key ==row.user.answer){
+                                        _data.answers.push(window.my.HtmlUtil.htmlDecode(option.value));
+                                    }
+                                }else{
+                                    row.user.answer.forEach(value=>{
+                                        if(option.key == value){
+                                            _data.answers.push(window.my.HtmlUtil.htmlDecode(option.value));
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                        // }else{
+                        //     if(row.isRight == true){
+                        //         tmp_option.forEach(option=>{
+                        //             _data.options.push(window.my.HtmlUtil.htmlDecode(option.Content));
+                        //             row.recordAnswer.split(",").forEach(index=>{
+                        //                 if(option.SortOrder == index){
+                        //                     _data.answers.push(window.my.HtmlUtil.htmlDecode(option.Content));
+                        //                 }
+                        //             })
+                                
+                        //         });
+                        //     }else{
+                        //         _data=null;
+                        //     }
+                        // }
+                        
+                    // }
+                    if(_data != null){
+                        newData.rows.push(_data);
+                    }
+                    
+                });
+            }else{
+                console.log(data);
+            }
+            console.log(newData)
+            return newData;
+        }
+        get_courses(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    // headers:{
+                    //     "Classroom-Id":classId,
+                    //     "Xtbz":"ykt",
+                    // },
+                    url: "https://"+this.config.front_url[2]+"/v2/api/web/courses/list?identity=2",
+                    success: function(res) {
+                        resolve(res.data.list);
+                    }
+                });
+            });
+        }
+        get_online_courseware(classId,free_sku_id){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers:{
+                        "Classroom-Id":classId,
+                        "Xtbz":"ykt",
+                    },
+                    url: "https://"+this.config.front_url[2]+"/c27/online_courseware/schedule/score_detail/single/"+free_sku_id+"/0/",
+                    success: function(res) {
+                        resolve(res.data);
+                    }
+                });
+            });
+        }
+        get_classrooms(classId){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    headers:{
+                        "Classroom-Id":classId,
+                        "Xtbz":"ykt",
+                    },
+                    url: "https://"+this.config.front_url[2]+"/v2/api/web/classrooms/"+classId+"?role=5",
+                    success: function(res) {
+                        resolve(res.data);
+                    }
+                });
+            });
         }
         get_user_inf(){
             return new Promise((resolve,rejcet)=>{
@@ -542,24 +1023,7 @@
                 });
             });
         }
-        async get_user_obj(){
-            let user_inf = await this.get_user_inf() || await this.get_user_inf1()
-            GM_setValue("userimg",user_inf.avatar||"");
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" +  user_inf.avatar||"" + ")")
 
-            let name = user_inf.name
-            let id = user_inf.user_id
-            this.config.user_id = "ykt_"+id
-            this.config.full_name = name;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "雨课堂",
-            };
-            return obj
-        }
         sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
         // 创建一个 PointerEvent 对象
         pointerEvent = new PointerEvent("pointerdown", {
@@ -663,12 +1127,242 @@
     }
     /*
     *  超星请求
-    *  作者：false
     */
     class chaoxin_api{
         constructor(config) {
             this.config = config;
+            try{
+                iframe.onload = ()=>{
+                    try {this.encode_font();} catch (e) {}
+                }
+            }catch{}
+            
         }
+        /**
+         * 原作者 wyn665817@163.com
+         * 链接 https://scriptcat.org/script-show-page/432/code
+         */
+        encode_font(){
+            console.log("解密字体")
+            // 判断是否存在加密字体
+            var $tip = $('iframe').contents().find("iframe").contents().find("iframe").contents().find('style:contains(font-cxsecret)')
+            if (!$tip.length) return;
+
+            // 解析font-cxsecret字体
+            var font = $tip.text().match(/base64,([\w\W]+?)'/)[1];
+            font = Typr.parse(base64ToUint8Array(font))[0];
+
+            // 匹配解密字体
+            var table = JSON.parse(GM_getResourceText('Table'));
+            var match = {};
+            for (var i = 19968; i < 40870; i++) { // 中文[19968, 40869]
+                $tip = Typr.U.codeToGlyph(font, i);
+                if (!$tip) continue;
+                $tip = Typr.U.glyphToPath(font, $tip);
+                $tip = CryptoJS.MD5(JSON.stringify($tip)).toString().slice(24); // 8位即可区分
+                match[i] = table[$tip];
+            }
+
+            // 替换加密字体
+            $('iframe').contents().find("iframe").contents().find("iframe").contents().find('.font-cxsecret').html(function(index, html) {
+                $.each(match, function(key, value) {
+                    key = String.fromCharCode(key);
+                    key = new RegExp(key, 'g');
+                    value = String.fromCharCode(value);
+                    html = html.replace(key, value);
+                });
+                return html;
+            }).removeClass('font-cxsecret'); // 移除字体加密
+
+            function base64ToUint8Array(base64) {
+                var data = window.atob(base64);
+                var buffer = new Uint8Array(data.length);
+                for (var i = 0; i < data.length; ++i) {
+                    buffer[i] = data.charCodeAt(i);
+                }
+                return buffer;
+            }
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.c === "res"||this.config.front_url[this.config.front_url.length-1] === "course-learning"){
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else if(this.config.front_url[4] =="studentstudy"||this.config.front_url[5] =="studentstudy"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                        this.aner.show("hide")
+                        this.aner.text("手动切换课程后请刷新页面")
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }else if(this.config.front_url[5] =="cards"){
+                console.log("获取答案")
+                if(!GM_getValue(this.config.knowledgeid)){
+                    await this.get_quiz_result(this.config.clazzid,this.config.courseid,this.config.knowledgeid,this.config.num);
+                }else{
+                    this.aner.show("hide")
+                    this.aner.text("题库已存在");
+                }
+
+            }else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+
+
+        get_cards(clazzid,courseid,knowledgeid,num){
+            return new Promise((resolve,rejcet)=>{
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: "https://mooc1-2.chaoxing.com/mooc-ans/knowledge/cards?clazzid="+clazzid+"&courseid="+courseid+"&knowledgeid="+knowledgeid+"&num="+num,
+                    onload: res=> {
+                        resolve(res.response);
+                    },
+                    onerror:err=>{
+                        console.log("加载失败")
+                    }
+                })
+            })
+        }
+        get_WorkQuestionYiPiYue(url){
+            url = url.replace("api=1", "api=0");
+            return new Promise((resolve,rejcet)=>{
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: url,
+                    onload: res=> {
+                        resolve(res.response);
+                    },
+                    onerror:err=>{
+                        console.log("加载失败")
+                    }
+                })
+            })
+        }
+        HtmlUtil = { //此处由于window.my还没有加载完毕，所以提前拉进来
+            /*1.用浏览器内部转换器实现html转码*/
+            htmlEncode:function (html){
+                //1.首先动态创建一个容器标签元素，如DIV
+                var temp = document.createElement ("div");
+                //2.然后将要转换的字符串设置为这个元素的innerText(ie支持)或者textContent(火狐，google支持)
+                (temp.textContent != undefined ) ? (temp.textContent = html) : (temp.innerText = html);
+                //3.最后返回这个元素的innerHTML，即得到经过HTML编码转换的字符串了
+                var output = temp.innerHTML;
+                temp = null;
+                return output;
+            },
+            /*2.用浏览器内部转换器实现html解码*/
+            htmlDecode:function (text){
+                //1.首先动态创建一个容器标签元素，如DIV
+                var temp = document.createElement("div");
+                //2.然后将要转换的字符串设置为这个元素的innerHTML(ie，火狐，google都支持)
+                temp.innerHTML = text;
+                //3.最后返回这个元素的innerText(ie支持)或者textContent(火狐，google支持)，即得到经过HTML解码的字符串了。
+                var output = temp.innerText || temp.textContent;
+                temp = null;
+                return output;
+            }
+        };
+        reset_answer(body){
+            let newData = {};
+            if(!$(body).find(".Py_answer").text().includes("正确答案")){
+                return console.log("并未获取到题库数据");
+            }
+            console.log("超星题库重组中");
+            newData.id = $(body).find("#knowledgeId")[0].value;
+            
+            newData.title = $(body).find("#_title")[0].value;
+            newData.rows = [];
+            $(body).find(".imgReview").each((_,row)=>{
+                let _data = {};
+                _data.id = $(row).find("#moreScore").attr("data");
+                row.title=this.HtmlUtil.htmlDecode($(row).find("#questionStem_"+_data.id).text().trim());
+                row.title = row.title.substr(0,500) //截断前500个字符
+                _data.subject = row.title;
+                _data.options = [];
+                _data.answers = [];
+                _data.type = $(row).find("#typeName_"+_data.id)[0].value;
+
+                let tmp_option = $(row).find("li.clearfix")
+                if(tmp_option.length){//多单选择
+                    tmp_option.each((_,option)=>{
+                        _data.options.push(this.HtmlUtil.htmlDecode($(option).find("a").text().trim()));
+                        let answers = $(row).find(".Py_answer").find("span")[0].innerText.substr(6).split("")
+                        answers.forEach(answer =>{
+                            if($(option).find("i").text()[0] == answer){
+                                _data.answers.push(this.HtmlUtil.htmlDecode($(option).find("a").text().trim()));
+                            }
+                        })
+                        
+                    });
+                }else{ //判断
+                    if($(row).find(".Py_answer.Py_tk.clearfix").length){
+                        _data.answers.push(this.HtmlUtil.htmlDecode($(row).find(".Py_answer.Py_tk.clearfix")[0].innerText.replace(/[\n\t ]/g, "").substr(5).trim()));
+                    }else{
+                        _data.answers.push(this.HtmlUtil.htmlDecode($(row).find(".Py_answer").find("span")[0].innerText.trim().substr(6).trim()));
+                    }
+                }
+                
+                if(_data != null){
+                    newData.rows.push(_data);
+                }
+                
+            });
+
+            console.log(newData)
+            return newData;
+        }
+        get_courses(){
+            return new Promise((resolve,rejcet)=>{
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: "https://mooc1-2.chaoxing.com/visit/courses",
+                    onload: res=> {
+                        resolve(res.response);
+                    },
+                    onerror:err=>{
+                        console.log("加载失败")
+                    }
+                })
+            })
+        }
+        get_studentcourse(url){
+            return new Promise((resolve,rejcet)=>{
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: url.replace("i.mooc","mooc1-2"),
+                    onload: res=> {
+                        resolve(res.response);
+                    },
+                    onerror:err=>{
+                        console.log("加载失败")
+                    }
+                })
+            })
+        }
+        get_student_specific(url){
+            return new Promise((resolve,rejcet)=>{
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: "https://mooc1-2.chaoxing.com/mooc-ans/mycourse/studentstudyAjax?"+url,
+                    onload: res=> {
+                        resolve(res.response);
+                    },
+                    onerror:err=>{
+                        console.log("加载失败")
+                    }
+                })
+            })
+        }
+
+
         get_userid(){
             return new Promise((resolve,rejcet)=>{
                 $.ajax({
@@ -683,25 +1377,9 @@
                 });
             });
         }
+        
         sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
-        async get_user_obj(){
-            // let a = await this.get_userid()
-            GM_setValue("userimg",$("body").find(".user").find("img")[0].attributes.src.value||"");
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" +  $("body").find(".user").find("img")[0].attributes.src.value||"" + ")")
 
-            let name = $("body").find(".user").find("h3")[0].innerText
-            let id = $("body").find(".user").find("img")[0].attributes.src.value.substr(28,9)
-            this.config.user_id = "cx_"+id
-            this.config.full_name = name;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "超星",
-            };
-            return obj
-        }
         async choice_function(){
             if(!GM_getValue("resource_farming_main_state")){
                 return
@@ -717,8 +1395,9 @@
                     console.log("视频加载")
                     video.muted = true;
                     while(1){
-                        if(video.ended){
+                        if(video.ended||$('iframe').contents().find(".ans-job-icon").attr("aria-label") == '任务点已完成'){
                             console.log("播放结束")
+                            $(".orientationright ").click()
                             $("#prevNextFocusNext").click()
                             this.choice_function() //再次循环
                             break;
@@ -732,7 +1411,15 @@
                     break;
                 }
             }
+            let next = $(".nextChapter")
+            $(".orientationright ").click()
             $("#prevNextFocusNext").click()
+            await this.sleep(1000);
+            next.each((index,div)=>{
+                div.click()
+            }) //在遇到试题时会弹出窗口
+
+            
             // GM_setValue("resource_farming_state",false)
             this.choice_function() //再次循环
             
@@ -742,11 +1429,33 @@
     
     /*
     *  国开请求
-    *  作者：false
     */
     class ouchn_api{
         constructor(config) {
             this.config = config;
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[5] =="ng#" ||this.config.front_url[5] =="ng" ){
+                GM_setValue("resource_farming_state",false) //    跨域访问，清空默认状态
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else if(this.config.front_url[5] =="learning-activity"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }
+            else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
         }
         get_userid(){
             return new Promise((resolve,rejcet)=>{
@@ -776,30 +1485,7 @@
         //         });
         //     });
         // }
-        async get_user_obj(){
-            // let a = await this.get_userid()
-            // a = $(a)
-            // eval(a.find("script")[0])
-            // console.log(globalData)
-            // let user_inf = await(this.get_user_inf());
-            // if(!user_inf){
-            //     return;
-            // }
-            // console.log(user_inf)
-            let user_inf = _this.globalData.user
-            // GM_setValue("userimg",user_inf.avatarUrl||"");
-            // let img_table = $('html').find("#x_set")
-            // img_table.css("background","url(" +  user_inf.avatarUrl||"" + ")")
-            this.config.user_id = "gk_"+user_inf.id
-            this.config.full_name = user_inf.name;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "国开",
-            };
-            return obj
-        }
+
 
         get_activity_reads(course){
             return new Promise((resolve,rejcet)=>{
@@ -905,7 +1591,7 @@
         }
         sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
         async resource_farming(){
-            let course = this.config.front_url.at(4)
+            let course = this.config.front_url[4]
             let url = "https://lms.ouchn.cn/course/"+course+"/learning-activity/full-screen#/"
             let activity_list=[]
             let divs = $(".learning-activity")
@@ -952,7 +1638,6 @@
     }
     /*
     *  meto请求
-    *  作者：alv002
     */
     class meto_api{
         constructor(config) {
@@ -973,6 +1658,7 @@
             });
         }
         async get_user_obj(){
+            //meto快捷
             let user_inf = await(this.get_user_inf());
             if(!user_inf){
                 return;
@@ -984,6 +1670,7 @@
             this.config.poolId = this.config.poolId.slice(0,8)+"-"+this.config.poolId.slice(8,12)+"-"+this.config.poolId.slice(12,16)+"-"+this.config.poolId.slice(16,20)+"-"+this.config.poolId.slice(20,32)
             GM_setValue("poolId",this.config.poolId);
             GM_setValue("ti_uid",this.config.tk_uid);
+            GM_setValue("pp",this.config.tk_uid);
             
             // GM_setValue("userimg",user_inf.avatarUrl||"");
             // let img_table = $('html').find("#x_set")
@@ -1001,11 +1688,38 @@
     }
     /*
     *  智慧职教请求
-    *  作者：强手猎鹿
     */
     class icve_api{
         constructor(config) {
             this.config = config;
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[this.config.front_url.length-1] == "keepTest"||this.config.front_url[this.config.front_url.length-1] =="jobTest"){ //
+                // this.Listener();
+                $('#zhu').append("<button id='x_start' ><span>开始搜题</span></button>");
+            }else if(this.config.front_url[this.config.front_url.length-1] =="course-learning"){ //暂未实现 留置
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else if(this.config.front_url[this.config.front_url.length-1] == "viewJob1"){
+                let aner = $('html').find("#aner")
+                aner.css("display","block")
+                aner.text("正在导入题库中");
+                let examId = this.config.examId||this.config.id;
+                let taskId = this.config.recordId||this.config.taskId;
+                if(!GM_getValue(examId+taskId)){
+                    let flag =  await(this.get_quiz_result(examId,taskId,"独立导入"));
+                    if(flag == "success"){
+                        aner.text("题库导入成功");
+                    }else{
+                        aner.text("题库导入失败");
+                    }
+                    
+                }else{
+                    aner.text("题库已存在");
+                }
+            }else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
         }
         get_user_inf(){
             return new Promise((resolve,rejcet)=>{
@@ -1051,35 +1765,7 @@
             }
             return "";
         }
-        async get_user_obj(){
-            let user_inf={}
-            if (_this._UID_){
-                user_inf.id = _this._UID_;
-                user_inf.displayName = _this._TRUENAME_;
-            }else{
-                user_inf =  await(this.get_user_inf());
-                if(!user_inf){
-                    user_inf = await(this.get_user_inf1());
-                    if(!user_inf){
-                        return
-                    }
-                }
-            }
-            console.log(user_inf)
-            GM_setValue("userimg",user_inf.avatarUrl||"");
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" +  user_inf.avatarUrl||"" + ")")
-            this.config.user_id = "icve_"
-            this.config.user_id += user_inf.id||user_inf.userId||user_inf.Id;
-            this.config.full_name = user_inf.displayName|| user_inf.nickName||user_inf.DisplayName;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "智慧职教",
-            };
-            return obj
-        }
+
 
         personResult(examId,taskId){
             return new Promise((resolve,rejcet)=>{
@@ -1116,72 +1802,6 @@
                     }
                 });
             });
-        }
-        async get_quiz_result(examId,taskId,courseId){
-            if(!classname){
-                let classListData = await (this.join_class());
-                if(!classListData){
-                    return;
-                }
-                classListData.rows.forEach(course=>{
-                    GM_setValue(course.courseId,course.courseName);//对应课名
-                })
-                var classname = GM_getValue("clazz_course_id")
-                if(!classname){
-                    classname = courseId;
-                }
-            }
-            let res = await (this.personResult(examId,taskId));
-            var status = "error";
-            // if(res.result_code != 0){
-            //      return alert(res.result_msg);
-            // }
-            let answers = this.reset_answer(res);
-            answers.title = GM_getValue(examId)||"未命名试卷"
-            if(answers == null || JSON.stringify(answers) == '{}' ){
-                return status;
-            }
-            let obj={
-                "poolId": this.config.poolId,
-                "userId":   this.config.tk_uid,
-                "tags":[classname,answers.title,"智慧职教"],
-                "title":"zhzj_"+answers.id,
-                "problems":[],
-            };
-            let data={};
-            
-            answers.rows.forEach(row=>{
-                if(row.subject.length < 4 || row.answers == ""){
-                    console.log("题目录入有误");
-                    return; //跳出循环
-                }
-                data={
-                    "tags":     ["智慧职教"],
-                    "text":     row.subject,
-                    "answer":   JSON.stringify(row.answers),
-                };
-                data.tags.push(row.type);
-                let l = ["choice_A","choice_B","choice_C","choice_D","choice_E","choice_F","choice_G","choice_H","choice_I","choice_J","choice_K","choice_L","choice_M","choice_N","choice_O","choice_P","choice_Q","choice_R","choice_S","choice_T","choice_U","choice_V","choice_W","choice_X","choice_Y","choice_Z"];
-                let i=0;
-                row.options.forEach(option =>{
-                    data[l[i]]=option;
-                    i=i+1;
-                })
-                obj.problems.push(data);
-            });
-            if(obj.problems.length == 0){
-                return;
-            }
-            await(window.my.upladApi(window.my.MainIP+"/tiku/api/v1/problems",obj).then((resutData)=>{
-                console.log(resutData)
-                if(resutData.result=="success" && resutData.json){
-                    var data = resutData.json.data;
-                    console.log(data);
-                    GM_setValue(examId+taskId,1);
-                    status = "success"
-                }
-            }));
-            return status;
         }
 
         reset_answer(data){
@@ -1273,45 +1893,6 @@
                     }
                 });
             });
-        }
-        async upload_all_problem(show_aner){
-            let classListData = await (this.join_class());
-            if(!classListData){
-                return;
-            }
-            classListData.rows.forEach(course=>{
-                GM_setValue(course.courseId,course.courseName);//对应课名
-            })
-            this.config.class_size = 0
-            this.config.class_length = 0
-            let aner = $('html').find("#aner")
-            if(show_aner){
-                aner.text("欢迎您的第一次使用，正在为您聚合数据中，请稍后。。。。");
-                aner.css("display","block")
-            }
-            for(let i=0;i<classListData.rows.length;i++){
-                let cl = classListData.rows[i];
-                this.get_page(cl.courseId,cl.courseInfoId).then((result) =>{
-                    result.rows.forEach(async (item)=>{
-                        if(!GM_getValue(item.id)){
-                            GM_setValue(item.id,item.name)
-                            this.config.class_length++;
-                            this.config.class_size++;
-                            try{
-                                await(this.get_quiz_result(item.id,item.taskId,cl.courseId));
-                                console.log(item.id+"upload成功")
-                            }catch{
-                                console.log(item.id+"upload失败")
-                            }
-                            this.config.class_size--;
-                            if(show_aner){
-                                aner.text("百分比长时间未动请刷新页面\n已加载："+Math.trunc((1-(this.config.class_size/this.config.class_length))*100)+"%");
-                            }
-                        }
-                    })
-
-                });
-            }
         }
         async start_search(){ //智慧职教搜题按钮实现
             const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
@@ -1469,22 +2050,27 @@
     }
     /*
     *  智慧树请求
-    *  作者：不愿公布
     */
     class zhihuishu_api{
-        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
         constructor(config) {
             this.config = config;
-            alert("由于智慧树官方代码被混淆加密，暂不公开源代码，\n需要使用该功能请加群获取qq群：945763596，\n或者访问https://github.com/alv002/meto")
+            alert("由于智慧树官方代码被混淆加密，暂不公开源代码，\n需要使用该功能请加群获取qq群：835306493，\n或者访问https://github.com/alv002/meto")
         }
     }
     /*
     *  精品云班课请求
-    *  上传作者alv001
     */
     class jpyunbanke_api {
         constructor(config) {
             this.config = config;
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.c === "res"||this.config.front_url[this.config.front_url.length-1] === "course-learning"){
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
         }
         getNewProject(){
             let user_inf = JSON.parse(localStorage.getItem("_user"))
@@ -1565,36 +2151,47 @@
                 });
             });
         }
-        async get_user_obj(){
-            let user_inf = await (this.get_user_inf());
-            if(!user_inf){
-                return;
-            }
-            GM_setValue("userimg",user_inf.fullAvatarUrl);
-            GM_setValue("user_id",user_inf.userId);
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" +  user_inf.fullAvatarUrl + ")")
-            this.config.user_id = user_inf.userId;
-            // console.log(this.config.user_list)
-            this.config.full_name = user_inf.fullName;
-            let obj={
-                "unionid": this.config.user_id,
-                "username": this.config.full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "精品云班课",
-            };
-            return obj
-        }
+
     }
     
 
     /*
     *  云班课请求
-    *  上传作者alv001
     */
     class yunbanke_api {
         constructor(config) {
             this.config = config;
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.m === "reply"){ //
+                // this.Listener();
+                $('#zhu').append("<button id='x_start' ><span>开始搜题</span></button>");
+                // document.getElementById("zhu")
+            }else if(this.config.c === "res"||this.config.front_url[this.config.front_url.length-1] === "course-learning"){
+                $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
+            }else if(this.config.m === "quiz_ranking" || this.config.m === "start_quiz_confirm"){
+                $('#zhu').append("<button id='x_yue' ><span>提前阅卷</span></button>");
+            }else if(this.config.m === "person_quiz_result"||this.config.m ==="view"){
+                // $('#zhu').append("<button id='x_start' ><span>开始搜题</span></button>");
+                $('#zhu').append("<button id='x_recall' ><span>背题模式</span></button>");
+                $('#zhu').append("<button id='x_error_problems' ><span>错题集</span></button>");
+                this.aner.css("display","block")
+                this.aner.text("正在导入题库中");
+                if(!GM_getValue(this.config.id)){
+                    let flag =  await(this.get_quiz_result(this.config.id,this.config.user_id,this.config.clazz_course_id));
+                    if(flag == "success"){
+                        this.aner.text("题库导入成功");
+                    }else{
+                        this.aner.text("题库导入失败");
+                    }
+                    
+                }else{
+                    this.aner.text("题库已存在");
+                }
+            }else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
         }
         getListMember(clazzcourseId){
             return new Promise((resolve,rejcet)=>{
@@ -1669,157 +2266,6 @@
                     }
                 });
             });
-        }
-
-        async get_user_obj(){
-            let classListData = await (this.join_class());
-            if(!classListData){
-                return console.log("未登录账户");
-            }
-            classListData.forEach(ccid=>{
-                GM_setValue(ccid.id,ccid.course.name);//对应课名
-                // console.log(ccid);
-            })
-            if(classListData.length == 0){
-                return console.log("未登录账户");
-            }     
-            
-            let {data:objectList} = await (this.getListMember(classListData[0].id));
-            if(objectList.length <= 0 ){
-                return alert("初始化脚本失败");
-            }
-            GM_setValue("userimg",objectList[0].full_avatar_url);
-            GM_setValue("user_id",objectList[0].user_id);
-            let img_table = $('html').find("#x_set")
-            img_table.css("background","url(" +  objectList[0].full_avatar_url + ")")
-            this.config.user_id = objectList[0].user_id;
-            this.config.user_list = objectList;
-            // console.log(this.config.user_list)
-            this.config.full_name = objectList[0].full_name;
-            this.config.clazz_course_id = classListData[0].id
-            let obj={
-                "unionid": objectList[0].user_id,
-                "username": objectList[0].full_name,
-                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
-                "grade": "云班课",
-            };
-            return obj
-        }
-
-        async upload_all_problem(show_aner){
-            let classListData = await (this.join_class());
-            if(!classListData){
-                return;
-            }
-            classListData.forEach(ccid=>{
-                GM_setValue(ccid.id,ccid.course.name);//对应课名
-                // console.log(ccid);
-            })
-            this.config.class_size = 0
-            this.config.class_length = 0
-            let aner = $('html').find("#aner")
-            if(show_aner){
-                aner.text("欢迎您的第一次使用，正在为您聚合数据中，请稍后。。。。");
-                aner.css("display","block");
-            }
-            for(let i=0;i<classListData.length;i++){
-                let cl = classListData[i];
-                this.get_page(cl.id).then((result) =>{
-                    $(result).find(".interaction-row").each(async (index,div)=>{
-                        let id = $(div).attr('data-id');
-                        let type = $(div).attr('data-type');
-                        let status = $(div).attr('data-row-status');
-                        if(type=="QUIZ"){
-                            if(!GM_getValue(id)){
-                                this.config.class_length++;
-                                this.config.class_size++;
-                                try{
-                                    await(this.get_quiz_result(id,this.config.user_id,cl.id));
-                                    console.log(id+"upload成功")
-                                }catch{
-                                    console.log(id+"upload失败")
-                                }
-                                
-                                this.config.class_size--;
-                                if(show_aner){
-                                    aner.text("百分比长时间未动请刷新页面\n已加载："+Math.trunc((1-(this.config.class_size/this.config.class_length))*100)+"%");
-                                }
-                            }
-                        }
-                    })
-
-                });
-            }
-        }
-
-        async get_quiz_result(id,user_id,clazz_course_id){
-            var classname = GM_getValue(clazz_course_id)
-            if(!classname){
-                let classListData = await (this.join_class());
-                if(!classListData){
-                    return;
-                }
-                classListData.forEach(ccid=>{
-                    GM_setValue(ccid.id,ccid.course.name);//对应课名
-                    // console.log(ccid);
-                })
-                var classname = GM_getValue(clazz_course_id)
-                if(!classname){
-                    classname = "未命名课程";
-                }
-            }
-            let res = await (this.personResult(id,user_id,clazz_course_id));
-            var status = "error";
-            // if(res.result_code != 0){
-            //      return alert(res.result_msg);
-            // }
-            let answers = this.reset_answer(res);
-            if(answers == null || JSON.stringify(answers) == '{}' ){
-                return status;
-            }
-            let obj={
-                "poolId": this.config.poolId,
-                "userId":   this.config.tk_uid,
-                "tags":[classname,answers.title,"云班课"],
-                "title":answers.id,
-                "problems":[],
-            };
-            let data={};
-            
-            answers.rows.forEach(row=>{
-                if(row.subject.length < 4 || row.answers == ""){
-                    console.log("题目录入有误");
-                    return; //跳出循环
-                }
-                data={
-                    "tags":     ["云班课"],
-                    "text":     row.subject,
-                    "answer":   JSON.stringify(row.answers),
-                };
-                data.tags.push(row.type);
-                let l = ["choice_A","choice_B","choice_C","choice_D","choice_E","choice_F","choice_G","choice_H","choice_I","choice_J","choice_K","choice_L","choice_M","choice_N","choice_O","choice_P","choice_Q","choice_R","choice_S","choice_T","choice_U","choice_V","choice_W","choice_X","choice_Y","choice_Z"];
-                let i=0;
-                row.options.forEach(option =>{
-                    data[l[i]]=option;
-                    i=i+1;
-                })
-                obj.problems.push(data);
-            });
-            if(obj.problems.length == 0){
-                return;
-            }
-            await(window.my.upladApi(window.my.MainIP+"/tiku/api/v1/problems",obj).then((resutData)=>{
-                console.log(resutData)
-                if(resutData.result=="success" && resutData.json){
-                    var data = resutData.json.data;
-                    console.log(data);
-                    GM_setValue(id,1);
-                    status = "success"
-                }else{
-                    console.log(resutData);
-                }
-            }));
-            return status;
         }
 
         reset_answer(data){
@@ -2185,7 +2631,7 @@
                 window.my.upload_papers(answers,this.config.id,"智慧树");
             }
             // alert('alv');
-            window.my.api.upload_all_problem(false)
+            this.upload_all_problem(false)
             //题库获取模块 end    
         }
     }
@@ -2205,7 +2651,7 @@
             },
             "deep": deep,
         };
-        await(this.upladApi(this.MainIP+"/tiku/api/v1/queryCollection",obj).then(async (resutData)=>{
+        await(this.upladApi("/tiku/api/v1/queryCollection",obj).then(async (resutData)=>{
             if(resutData.result==="success" && !!resutData.json){
                 var data = resutData.json.results;
                 console.log("总共查询到数据库数量"+data.length+"个");
@@ -2255,8 +2701,21 @@
     };
 
     MyPage.prototype.initMenu = function(){
+        GM_registerMenuCommand("基本设置",function(){
+            $('html').find("#set").toggle('active');
+        });
+        GM_registerMenuCommand(GM_getValue("is_wait") ? "开启延迟交卷" : "关闭延迟交卷（不建议）"  ,function(){
+            GM_setValue("is_wait",!GM_getValue("is_wait"));
+            location.reload();
+        });
+        GM_registerMenuCommand("重置脚本",function(){
+            GM_setValue("overdue",1);
+            GM_setValue("window.al_yun_xx",null);
+            location.reload();
+        });
         let $ = this.$,menu = this.menu;
         $(document).on('mousedown', '#x_set', function (e) {
+            e.stopPropagation();
             window.my.arrowMove(e);//.target.parentNode.id
         });
         $(document).on('click', '#x_start', function () {
@@ -2283,10 +2742,10 @@
                 aner.append("搜索题目需要6个字符以上");
                 return;
             }
-            aner.append("目前服务器被恶意攻击，可能会超时，<hr>");
+            aner.append("若长时间未返回信息，请反馈<hr>");
             // problem = window.my.HtmlUtil.htmlDecode(text.value);
             // console.log(problem)
-            await window.my.findproblem(text.value.replace(/   /g,"   "))
+            await window.my.findproblem(text.value.replace(/   /g,"   ").substr(0,30))
             aner.text("");
             aner.append("搜索到"+window.my.config.answer.rows.length+"条相关题目<hr>");
             window.my.config.answer.rows.forEach(row=>{
@@ -2335,6 +2794,7 @@
                 data: JSON.stringify(obj),
                 onloadstart: function(response) {
                     aner.text("");
+                    // console.log(response.response)
                     const reader = response.response.getReader();
                     var error_d = "";
                     function read() {
@@ -2501,7 +2961,6 @@
                 letter-spacing: 1px;
                 /* 鼠标小手 */
                 cursor: pointer;
-            
                 /* 给个定位 */
                 position: relative;
                 /* 3D模式 */
@@ -2563,12 +3022,12 @@
                 pointer-events: visible;
             }
             #${menu.id} .drawer{
-                text-align: center;
                 pointer-events: visible;
                 position:relative;
                 max-height:400px;
                 overflow:auto;
-                // display: none;
+                text-align: center;
+                display: none;
                 background: #fff;
                 border-radius: 10px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -2576,7 +3035,7 @@
                 max-width: 300px;
                 opacity: 0.9;
                 z-index: 199;
-                padding:3px;
+                padding:10px 0px;
                 margin:10px;
             }
             #${menu.id} p{
@@ -2586,15 +3045,16 @@
             #${menu.id} .drawer input{
                 border-radius: 3px;
                 border: 1px solid;
-                width:50%;
+                width:160px;
             }
             #${menu.id} .drawer button{
+                white-space: pre; /*禁止换行*/
+                width:40px;
                 display:inline;
-                vertical-align:middle;
                 border: 1px solid;
                 background-color: transparent;
                 text-transform: uppercase;
-                padding: 1px 2px;
+                padding: 1px 0px;
                 font-weight: 300;
             }
             #${menu.id} .drawer button:hover {
@@ -2637,265 +3097,119 @@
                 </div>
                 <div class= "drawer" id="set">
                     <div>
-                        🦄️<input id = "tiku_user" readonly="readonly" value="未获取到用户名,请刷新重试" />
+                        🦄️ <input id = "tiku_user" readonly="readonly" value="您的版本过低，请手动登录" />
                         ${GM_getValue("ti_uid")?`<button onclick="GM_setValue('ti_uid','');location.reload()">退出</button>`:`<button onclick="window.open('${this.ChatIP}/#/activate', 'Meto登陆', 'width=400,height=600');">登陆</button>`}
-                        <button  id="x_charge" ><a target="_blank" href = "https://d.met0.top/buy/3">充电</a></button>
+                        <button  id="x_charge" ><a target="_blank" href = "https://d.met0.top/buy/3">赞赏</a></button>
                     </div>
                     <div>
-                        🔎<input id = "find_input" placeholder="搜索题目需要6个字符以上" />
+                        🔎 <input id = "find_input" placeholder="搜索题目需要6个字符以上" />
                         <button  id="x_find" >MT搜</button>
                         <button  id="x_AIfind" >AI搜</button>
                     </div>
                     <div>
                         本项目非盈利，欢迎给项目发电<br/>
-                        大家的支持就是我开发的动力<br/>
-                        TG群:🐟<a target="_blank" href = "https://t.me/tg_meto">点我进群</a>(需魔法)🐟<br/>
-                        QQ群:😄716217812😄
+                        大家的支持才有我开发的动力<br/>
+                        <a target="_blank" href = "https://pd.qq.com/s/7hrwqmix1">QQ频道:🌈点我进群🌈</a><br/>
+                        <a target="_blank" href = "https://t.me/tg_meto">TG群:🐟点我进群(需魔法)🐟</a><br/>
                     </div>
                 </div>
                 <div class= "drawer" id="aner">
+                    <p>
+                        正在获取试卷中，请稍等
+                    </p>
+                
                 </div>
             </div>`);
         $($menu).appendTo('html');
 
         this.aner = $('#aner');
-        // GM_setValue("update_time","")
-        
     }
    
 
     MyPage.prototype.initData = async function(){ //初始化
-        GM_registerMenuCommand("基本设置",function(){
-            $('html').find("#set").toggle('active');
-        });
-        GM_registerMenuCommand(GM_getValue("is_wait") ? "开启延迟交卷" : "关闭延迟交卷（不建议）"  ,function(){
-            GM_setValue("is_wait",!GM_getValue("is_wait"));
-            location.reload();
-        });
-        GM_registerMenuCommand("重置脚本",function(){
-            GM_setValue("overdue",1);
-            GM_setValue("window.al_yun_xx",null);
-            location.reload();
-        });
-        this.config.tk_uid = GM_getValue("ti_uid");
+        // this.api.upload_all_problem(true) //测试全局上传
+        this.config.tk_uid=GM_getValue("ti_uid");
+        this.config.pp = GM_getValue("pp");
         this.config.poolId = GM_getValue("poolId");
-        if(!this.config.tk_uid && this.config.hostname == "meto"){
-            await this.api.get_user_obj();
-        }
-        document.getElementById("tiku_user").value=GM_getValue("ti_uid")||"您的版本过低，请手动登录"
-        
-        switch (this.config.hostname){
-            case "mooc.mosoteach":
-                if(this.config.c === "res"||this.config.front_url.at(-1) === "course-learning"){
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                }else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+        console.log(this.config.front_url)
+        //GM_getValue("overdue") != this.config.hostname ||  //暂时去除，保留登陆信息
+        if(GM_getValue("overdue") == 1
+        ||!this.config.tk_uid || !this.config.pp || !this.config.poolId 
+        || this.config.tk_uid == "null" || this.config.pp == "null" || this.config.poolId == "null")
+        {
+            GM_setValue("overdue",this.config.hostname)
+            try{
+                var obj =await this.api.get_user_obj();
+                if(!obj.unionid){
+                    console.log("未获取到用户id")
+                    return
                 }
-                break;
-            case "mosoteach": {
-                if(this.config.m === "reply"){ //
-                    // this.Listener();
-                    $('#zhu').append("<button id='x_start' ><span>开始搜题</span></button>");
-                    // document.getElementById("zhu")
-                }else if(this.config.c === "res"||this.config.front_url.at(-1) === "course-learning"){
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                }else if(this.config.m === "quiz_ranking" || this.config.m === "start_quiz_confirm"){
-                    $('#zhu').append("<button id='x_yue' ><span>提前阅卷</span></button>");
-                }else if(this.config.m === "person_quiz_result"){
-                    // $('#zhu').append("<button id='x_start' ><span>开始搜题</span></button>");
-                    $('#zhu').append("<button id='x_recall' ><span>背题模式</span></button>");
-                    $('#zhu').append("<button id='x_error_problems' ><span>错题集</span></button>");
-                    let aner = $('html').find("#aner")
-                    aner.css("display","block")
-                    aner.text("正在导入题库中");
-                    if(!GM_getValue(this.config.id)){
-                        flag =  await(this.api.get_quiz_result(this.config.id,this.config.user_id,this.config.clazz_course_id));
-                        if(flag == "success"){
-                            aner.text("题库导入成功");
-                        }else{
-                            aner.text("题库导入失败");
-                        }
-                        
-                    }else{
-                        aner.text("题库已存在");
-                    }
-                }else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
-            }
-            case "zhihuishu": {
-                if(this.config.front_url.at(5) == "checkHomework"){
-                    let aner = $('html').find("#aner")
-                    aner.css("display","block")
-                    aner.text("正在导入题库中");
-                    let examId = this.config.examId||this.config.id;
-                    let taskId = this.config.recordId||this.config.taskId;
-                    let obj = {
-                        recruitId: this.config.front_url[6],
-                        studentExamId: this.config.front_url[7],
-                        examId: this.config.front_url[8],
-                        schoolId: this.config.front_url[10],
-                        courseId: this.config.front_url[9],
-                    }
-                    if(!GM_getValue(obj.examId)){
-                        let server_token = await(labc(3))
-                        flag =  await(this.api.get_quiz_result(server_token,obj));
-                        if(flag == "success"){
-                            aner.text("题库导入成功");
-                        }else{
-                            aner.text("题库导入失败");
-                        }
-                        
-                    }else{
-                        aner.text("题库已存在");
-                    }
-                }else if(this.config.front_url.at(3) =="stuStudy"){
-                    this.api.choice_function()
-                    if(GM_getValue("resource_farming_main_state")){
-                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",!1)'><span>停止翻页</span></button>");
-                    }else{
-                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",!0);location.reload()'><span>自动翻页</span></button>");
-                    }
-                }else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
-            }
-            case "icve": {
-                if(this.config.front_url.at(-1) == "keepTest"||this.config.front_url.at(-1) =="jobTest"){ //
-                    // this.Listener();
-                    $('#zhu').append("<button id='x_start' ><span>开始搜题</span></button>");
-                }else if(this.config.front_url.at(-1) =="course-learning"){ //暂未实现 留置
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                }else if(this.config.front_url.at(-1) == "viewJob1"){
-                    let aner = $('html').find("#aner")
-                    aner.css("display","block")
-                    aner.text("正在导入题库中");
-                    let examId = this.config.examId||this.config.id;
-                    let taskId = this.config.recordId||this.config.taskId;
-                    if(!GM_getValue(examId+taskId)){
-                        flag =  await(this.api.get_quiz_result(examId,taskId,"独立导入"));
-                        if(flag == "success"){
-                            aner.text("题库导入成功");
-                        }else{
-                            aner.text("题库导入失败");
-                        }
-                        
-                    }else{
-                        aner.text("题库已存在");
-                    }
-                }else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
-            }
-            case "ouchn":{
-                if(this.config.front_url.at(5) =="ng#" ||this.config.front_url.at(5) =="ng" ){
-                    GM_setValue("resource_farming_state",false) //    跨域访问，清空默认状态
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                }else if(this.config.front_url.at(5) =="learning-activity"){
-                    this.api.choice_function()
-                    if(GM_getValue("resource_farming_state")){
-                        $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
-                        this.aner.show("hide")
-                        this.aner.text("如需暂停请刷新上一级页面")
-                    }else{
-                        if(GM_getValue("resource_farming_main_state")){
-                            $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
-                        }else{
-                            $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
-                        }
-                    }
-                }
-                else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
-            }
-            case "yuketang":{
-                if(this.config.front_url.at(-1) =="studycontent"||this.config.front_url.at(-2) =="studentLog"){
-                    GM_setValue("resource_farming_state",false) //    跨域访问，清空默认状态
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                }else if(this.config.front_url.at(-2) =="video" || this.config.front_url.at(-3) =="video-student"){
-                    this.api.choice_function()
-                    if(GM_getValue("resource_farming_state")){
-                        $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
-                        this.aner.show("hide")
-                        this.aner.text("如需暂停请刷新上一级页面")
-                    }else{
-                        if(GM_getValue("resource_farming_main_state")){
-                            $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false)'><span>停止翻页</span></button>");
-                        }else{
-                            $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
-                        }
-                    }
-                }
-                else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
-            }
-            case "chaoxing":{
-                if(this.config.c === "res"||this.config.front_url.at(-1) === "course-learning"){
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                }else if(this.config.front_url.at(4) =="studentstudy"){
-                    this.api.choice_function()
-                    if(GM_getValue("resource_farming_state")){
-                        $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
-                        this.aner.show("hide")
-                        this.aner.text("如需暂停请刷新上一级页面")
-                    }else{
-                        if(GM_getValue("resource_farming_main_state")){
-                            $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
-                        }else{
-                            $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
-                        }
-                    }
-                }else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
-            }
-            case "mooc":{
-                if(this.config.front_url.at(-1) =="studycontent"||this.config.front_url.at(-2) =="studentLog"){
-                    GM_setValue("resource_farming_state",false) //    跨域访问，清空默认状态
-                    $('#zhu').append("<button id='x_res' ><span>一键完成资源</span></button>");
-                
-                }else{
-                    $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
-                }
-                break;
+            }catch(e){
+                console.log(e)
+                this.aner.show("slow");
+                this.aner.text("可能是由于版本过低无法快捷登录，请手动登录")
+                $(".drawer").show("slow");
+                return;
             }
 
+
+            
         }
+        document.getElementById("tiku_user").value=this.config.tk_uid||"您的版本过低，请手动登录";
+        try{
+            this.api.init_button()
+        }catch(e){
+            console.log("暂时未定义button",e)
+        }
+        
+        document.hasFocus = ()=> { //移出窗口
+            return true
+        }
+        
+        /*
+        *   主要应用于智慧树不可复制
+        */
+        document.onselectstart = true;
+        document.oncopy = true;
+        document.oncut = true;
+        document.onpaste = true;
+        document.oncontextmenu = true;
+        window.getSelection().removeAllRanges = function (){}
+        window.getSelection().empty = function (){}
         
     }
 
     
 
 
-    MyPage.prototype.toLog=function(explain){
+    MyPage.prototype.prival_global= async function(){
         /*
         *  全局定时器
         */
         let find_input =  document.getElementById("find_input");
         var flag=true;
-        setInterval(()=> {
-            if(this.config.front_url.at(-1) != window.location.href.split("?")[0].split("/").at(-1)){
-                location.reload()
+        let GlobalInterval=setInterval(()=> {
+            if(this.config.front_url[2]=="www.icourse163.org"){
+                // console.log(this.config.aid)
+            }else{
+                if(this.config.front_url[this.config.front_url.length-1] != window.location.href.split("?")[0].split("/")[window.location.href.split("?")[0].split("/").length-1] || this.config.front_url[this.config.front_url.length-2] != window.location.href.split("?")[0].split("/")[window.location.href.split("?")[0].split("/").length-2]){
+                    clearInterval(GlobalInterval)//部分网站会死循环
+                    location.reload()
+                }
             }
             let yaya_select = window.getSelection().toString();
             if(yaya_select){
-                find_input.value = window.getSelection().toString()
+                try{
+                    find_input.value = window.getSelection().toString()
+                }catch{
+                    clearInterval(GlobalInterval)
+                }
             }
             if($("video").length&&flag){
                 flag = false
                 window.my.video_spend()
             }
         }, 400)
-        // alert('啊绿: '+explain);
-        this.initData();
         return this;
     }
     MyPage.prototype.findproblem = async function(text){
@@ -2909,7 +3223,7 @@
             }
         }
         /////
-        await(this.upladApi(this.MainIP+"/tiku/api/v1/queryProblems",obj).then(async (resutData)=>{
+        await(this.upladApi("/tiku/api/v1/queryProblems",obj).then(async (resutData)=>{
             if(resutData.result==="success" && !!resutData.json){
                 var data = resutData.json.results;
                 //处理数据，添加标识头
@@ -2944,7 +3258,7 @@
             }
             obj.querry.problems.push(problemobj);
         })
-        await(this.upladApi(this.MainIP+"/tiku/api/v1/queryProblems",obj).then(async (resutData)=>{
+        await(this.upladApi("/tiku/api/v1/queryProblems",obj).then(async (resutData)=>{
             if(resutData.result==="success" && !!resutData.json){
                 var data = resutData.json.results;
                 //处理数据，添加标识头
@@ -2981,7 +3295,7 @@
             obj.problemIds.push(row.problemId); 
         });
         // console.log(obj);
-        await(this.upladApi(this.MainIP+"/tiku/api/v1/collection",obj).then(async (resutData)=>{
+        await(this.upladApi("/tiku/api/v1/collection",obj).then(async (resutData)=>{
             if(resutData.result==="success" && !!resutData.json){
                 // var data = resutData.json.results;
                 console.log(resutData);
@@ -2989,6 +3303,90 @@
         }))
     }
     
+
+
+    MyPage.prototype.Listener = function(){
+        $('body').append(
+			`<script>
+			;(function() {
+                
+                if (typeof window.CustomEvent === 'function') return false;
+        
+                function CustomEvent(event, params) {
+                    params = params || { bubbles: false, cancelable: false, detail: undefined };
+                    // 创建自定义事件
+                    var evt = document.createEvent('CustomEvent');
+                    // 第一个参数为要处理的事件名
+                    // 第二个参数为表明事件是否冒泡
+                    // 第三个参数为表明是否可以取消事件的默认行为
+                    // 第四个参数为细节参数
+                    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+                    return evt;
+                }
+        
+                CustomEvent.prototype = window.Event.prototype;
+        
+                window.CustomEvent = CustomEvent;
+            })();
+            (function() {
+                function ajaxEventTrigger(event) {
+                    // 创建事件对象
+                    var ajaxEvent = new CustomEvent(event, { detail: this });
+                    // 触发执行
+                    window.dispatchEvent(ajaxEvent);
+                }
+        
+                var oldXHR = window.XMLHttpRequest;
+                function newXHR() {
+                    var realXHR = new oldXHR();
+                    realXHR.addEventListener('abort', function() { ajaxEventTrigger.call(this, 'ajaxAbort'); }, false);
+                    realXHR.addEventListener('error', function() { ajaxEventTrigger.call(this, 'ajaxError'); }, false);
+                    realXHR.addEventListener('load', function() { ajaxEventTrigger.call(this, 'ajaxLoad'); }, false);
+                    realXHR.addEventListener('loadstart', function() { ajaxEventTrigger.call(this, 'ajaxLoadStart'); }, false);
+                    realXHR.addEventListener('progress', function() { ajaxEventTrigger.call(this, 'ajaxProgress'); }, false);
+                    realXHR.addEventListener('timeout', function() { ajaxEventTrigger.call(this, 'ajaxTimeout'); }, false);
+                    realXHR.addEventListener('loadend', function() { ajaxEventTrigger.call(this, 'ajaxLoadEnd'); }, false);
+                    realXHR.addEventListener('readystatechange', function() { ajaxEventTrigger.call(this, 'ajaxReadyStateChange'); }, false);
+                    // l.onreadystatechange = function() {
+                    //     if (l && 4 === l.readyState && (0 !== l.status || l.responseURL && 0 === l.responseURL.indexOf("file:"))) {
+                    //         var n = "getAllResponseHeaders"in l ? a(l.getAllResponseHeaders()) : null
+                    //           , r = e.responseType && "text" !== e.responseType ? l.response : l.responseText
+                    //           , i = {
+                    //             data: r,
+                    //             status: l.status,
+                    //             statusText: l.statusText,
+                    //             headers: n,
+                    //             config: e,
+                    //             request: l
+                    //         };
+                    //         o(t, f, i),
+                    //         l = null
+                    //     }
+                    // }
+                    return realXHR;
+                }
+        
+                window.XMLHttpRequest = newXHR;
+            })();
+        
+            // 调用
+            window.addEventListener('ajaxReadyStateChange', function(e) {
+                // if (e.detail.readyState === 1) {
+                //     console.log(123);
+                //     e.detail.setRequestHeader('token', '1326');
+                // }
+                e.detail.onload = function() {
+                    // if(e.detail.responseURL=="https://www.mosoteach.cn/web/index.php?c=interaction_quiz&m=save_answer"){
+                        console.log('event====>', e.detail);
+                    // }
+                    
+                };
+            });
+            `
+		)
+
+    }
+
     MyPage.prototype.compareArr = function(arr1 = [], arr2 = []) {   
         // arr1.sort();
         // arr2.sort();
@@ -3025,8 +3423,9 @@ if(window.location == window.parent.location){ // 判断是否为ifarm
         background:'#fff',
         opacity:0.8,
         pos:{
-            x:100,
-            y:100
+            x:80,
+            y:80
         }
-    }).toLog('私人圈子传播，请勿外传');
+    });
 }
+

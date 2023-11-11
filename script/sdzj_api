@@ -1,0 +1,129 @@
+/*
+    *  山东专技请求
+    *  作者：instre
+    */
+     class sdzj_api{
+        constructor(config) {
+            this.config = config;
+        }
+        get_user_inf(){
+            return new Promise((resolve,rejcet)=>{
+                $.ajax({
+                    type: 'get',
+                    xhrFields: {
+                        withCredentials: true  //允许跨域发送cookies
+                    },
+                    url: "https://sdzz-train.treewises.com/api/login/get-account-info.gson",
+                    success: function(res) {
+                        resolve(res.attribute.cmsAccountInfo);
+                    }
+                });
+            })
+            
+        }
+        async get_user_obj(){
+            let user_inf = await this.get_user_inf()
+            console.log(user_inf)
+            let name = user_inf.realName
+            let id = user_inf.accountId
+            this.config.user_id = id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "山东专技",
+            };
+            return obj
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[3] =="learning"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }
+            else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        async choice_function(){
+            if(!GM_getValue("resource_farming_state")&&!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            for(let i=10;i;i--){
+                console.log("检测视频loading")
+                await this.sleep(1000)
+                if($("video").length&&$("video")[0].duration){
+                    console.log("视频加载")
+                    let video = $("video")[0]
+                    document.hasFocus = ()=> {
+                        return true
+                    }
+                    await this.sleep(2000)
+                    // $(".xt_video_player_common_icon").click()
+                    while(1){
+                        if(video.ended){
+                            $(".course-spend").each((index,div)=>{
+                                if(div.innerHTML!='100.0%'){
+                                    div.click()
+                                    this.choice_function()
+                                }
+                            })
+                            break;
+                            
+                        }
+                        await this.sleep(1000)
+                        video.muted = true;
+                        $("#replaybtn").click()//播放按钮1
+                        $(".bplayer-play-btn").click() //播放按钮2
+                        let div = $(".ccQuestion").find("li"); //第一个答题验证
+                        while(div.length){
+                            var randElement = div[Math.floor(Math.random() * div.length)];
+                            randElement.click()
+                            $("#ccQuestionSubmit").click()
+                            if($("#rightBtn").length){
+                                $("#rightBtn").click()
+                                break;
+                            }
+                            await this.sleep(100)
+                        }
+                        div = $(".bplayer-question-content").find(".option-item"); //第二个答题验证
+                        while(div.length && div.attr("style") != 'display: none;'){
+                            var randElement = div[Math.floor(Math.random() * div.length)];
+                            randElement.click()
+                            $(".commit.bplayer-btn").click()
+                            $(".complete.bplayer-btn").click()
+                            $(".commit.bplayer-btn").click()
+                            
+                            // if($("#rightBtn").length){
+                            //     $("#rightBtn").click()
+                            //     break;
+                            // }
+                            await this.sleep(100)
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            await this.sleep(1000)
+            GM_setValue("resource_farming_state",false)
+            if(GM_getValue("resource_farming_main_state")){
+                $(".btn-next").click()
+            }else{
+                window.close();
+            }
+            
+        }
+    }

@@ -1,0 +1,98 @@
+/*
+    *  西财在线请求
+    *  作者:charming
+    */
+    class xczx_api{
+        constructor(config) {
+            this.config = config;
+        }
+        async get_user_obj(){
+            let name = _this._USERNAME_
+            let id = _this._LOGINID_
+            this.config.user_id = "xczx_"+id
+            this.config.full_name = name;
+            let obj={
+                "unionid": this.config.user_id,
+                "username": this.config.full_name,
+                "poolId":"ec942b0b-38c6-3256-b0e1-2a33428d4bbc",
+                "grade": "西财在线",
+            };
+            return obj
+        }
+        async init_button(){
+            this.aner = $('#aner');
+            if(this.config.front_url[4] =="learn"){
+                this.choice_function()
+                if(GM_getValue("resource_farming_state")){
+                    $('#zhu').append("<button id='x_xxx' ><span>正在刷资源，请稍后</span></button>");
+                    this.aner.show("hide")
+                    this.aner.text("如需暂停请刷新上一级页面")
+                }else{
+                    if(GM_getValue("resource_farming_main_state")){
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",false);location.reload()'><span>停止翻页</span></button>");
+                    }else{
+                        $('#zhu').append("<button onclick='GM_setValue(\"resource_farming_main_state\",true);location.reload()'><span>自动翻页</span></button>");
+                    }
+                }
+            }
+            else{
+                $('#zhu').append("<button onclick='window.open(\"https://d.met0.top\");'><span>MeT0题库</span></button>");
+            }
+        }
+        sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+        async choice_function(){
+            if(!GM_getValue("resource_farming_state")&&!GM_getValue("resource_farming_main_state")){
+                return
+            }
+            var divIframe
+            for(let i=20;i;i--){
+                console.log("检测视频loading")
+                await this.sleep(1000)
+                divIframe = $("iframe").contents()
+                let videoIframe = $("iframe").contents().find("iframe").contents()
+                if(videoIframe.find("video").length&&videoIframe.find("video")[0].duration){
+                    console.log("视频加载")
+                    let video = videoIframe.find("video")[0]
+                    // $(".xt_video_player_common_icon").click()
+                    while(1){
+                        video = videoIframe.find("video")[0]
+                        if(!video){
+                            location.reload()
+                        }
+                        if(video.ended){
+                            console.log("video finsh")
+                            let flag = false;
+                            divIframe.find(".s_point").each((index,div)=>{
+                                if($(div).find(".item_done_icon.item_done_pos").attr("class") != 'item_done_icon item_done_pos done_icon_show' && $(div).find(".s_learn_video").length&&!flag){
+                                    div.click()
+                                    flag = true
+                                    this.choice_function();
+                                }
+                            })
+                            break;
+                        }
+                        video.muted = true;
+                        videoIframe.find(".screen-player-btn-icon.icon-play-sp-fill").click()
+                        await this.sleep(4000)
+                    }
+                    break;
+                }
+            }
+            
+            await this.sleep(1000)
+            GM_setValue("resource_farming_state",false)
+            if(GM_getValue("resource_farming_main_state")){
+                let flag = false;
+                divIframe.find(".s_point").each((index,div)=>{
+                    if($(div).find(".item_done_icon.item_done_pos").attr("class") != 'item_done_icon item_done_pos done_icon_show' && $(div).find(".s_learn_video").length&&!flag){
+                        div.click()
+                        flag = true
+                        this.choice_function();
+                    }
+                })
+            }else{
+                window.close();
+            }
+            
+        }
+    }

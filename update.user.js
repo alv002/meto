@@ -1,18 +1,19 @@
 // ==UserScript==
-// @name         🌈大学摆烂神器🌛支持全网课平台，支持答题｜刷资源｜视频加速｜题目收录｜快速背题｜AI搜题｜AI问答｜
-// @version      5.4.3
-// @description  【🐯全网免费仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、剩余网站仅支持部分功能🚀】【半兼容、绎通云、U校园、学堂在线】、【😎完美应付考试、测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【有其他平台支持需要的请加群催更:tg群🐟https://t.me/tg_meto🐟QQ群😄716217812😄，共同交流进步，特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
+// @name         🌈大学摆烂神器🌛支持全网课平台，支持答题｜刷资源｜视频加速｜快速背题｜AI搜题｜AI问答｜
+// @version      5.4.5
+// @description  【🐯全网免费仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、山东专技、西财在线、剩余网站仅支持部分功能🚀】【半兼容、绎通云、U校园、学堂在线】、【😎完美应付测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【有其他平台支持需要的请加群催更:qq频道🌈03b6e74rkp🌈tg群🐟tg_meto🐟qq群😄835306493😄，共同交流进步，特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
 // @author       alv
 // @note         请合理规划节约下来的时间，时间宝贵，不要成天rush B，OK？
 // @match        *://*/*
 // @supportURL   https://github.com/alv002/meto/
 // @updateURL    https://github.com/alv002/meto/
-// @updateURL    https://d.met0.top/uploads/js/update.user.js
-// @downloadURL  https://d.met0.top/uploads/js/update.user.js
+// @updateURL    https://d.metost.com/uploads/js/update.user.js
+// @downloadURL  https://d.metost.com/uploads/js/update.user.js
 // @icon         https://bkimg.cdn.bcebos.com/pic/4ec2d5628535e5dde7114110e88eb0efce1b9c16c4e1
 // @require      https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
+// @require      https://greasyfork.org/scripts/445293/code/TyprMd5.js
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_addStyle
@@ -22,9 +23,12 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
 // @connect      met0.top
-// @connect      127.0.0.1
-// @connect      gitee.com
+// @connect      met0.cn
+// @connect      metost.com
+// @connect      chaoxing.com
+// @connect      unipus.cn
 // @connect      *
+// @resource     Table https://www.forestpolice.org/ttf/2.0/table.json
 // @resource     JQ361JS https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.min.js
 // @resource     Vue http://lib.baomitu.com/vue/2.6.0/vue.min.js
 // @resource     jqueryweui https://cdn.bootcdn.net/ajax/libs/jquery-weui/1.2.1/js/jquery-weui.min.js
@@ -89,7 +93,7 @@
         }
         GM_xmlhttpRequest({
             method: "GET",
-            url: "https://d.met0.top/uploads/js/all.js",
+            url: GM_getValue("choice_server")?"https://d.metost.com/uploads/js/all.js":"https://d.met0.cn/uploads/js/all.js",
             onload: res=> {
                 window.al_yun_xx = res.response;
                 console.log(res.status )
@@ -97,11 +101,13 @@
                     GM_setValue("window.al_yun_xx",res.response);
                     document.getElementById('zhezhao').style.display="none";//加载成功便删掉提示
                 }else{
-                    dianwo("脚本加载失败,请尝试更换网络。需要可以访问 https://v.met0.top 若出现验证信息，请完成验证即可正常使用脚本");
+                    GM_setValue("choice_server",!GM_getValue("choice_server"));
+                    dianwo("脚本加载失败,请尝试更换网络。需要可以访问 https://v.metost.com 若出现验证信息，请完成验证即可正常使用脚本");
                 }
             },
             onerror:err=>{
-                dianwo("脚本加载失败,请尝试更换网络。需要可以访问 https://v.met0.top 若出现验证信息，请完成验证即可正常使用脚本");
+                GM_setValue("choice_server",!GM_getValue("choice_server"));
+                dianwo("脚本加载失败,请尝试更换网络。需要可以访问 https://v.metost.com 若出现验证信息，请完成验证即可正常使用脚本");
             }
         })
     }
@@ -109,7 +115,7 @@
 })();
 
 (function () {
-    function cc(url){;let obj = {};let arr1 = url.split("?");let arr2 = arr1[1].split("&");for(let i=0;i<arr2.length;i++){;let res = arr2[i].split("=");obj[res[0]]=res[1];};return obj;};var xx=window[(771383 ^ 771385)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](130148 ^ 130116) + (992937 ^ 992950)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](495187 ^ 495219) + (252852 ^ 252862)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](708261 ^ 708229) + (319087 ^ 319098)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](455467 ^ 455435)];$("html").append('<div id = "yl"><div id="yl_1"></div><div id="yl_2"></div><div id="yl_3"></div><div id="yl_4"></div><div id="yl_5"></div><div id="yl_6"></div><div id="yl_7"></div><div id="yl_8"></div><div id="yl_9"></div></div>'),$("#yl_1")[0].onclick=GM_xmlhttpRequest,$("#yl_2")[0].onclick=GM_addStyle,$("#yl_3")[0].onclick=GM_getValue,$("#yl_4")[0].onclick=GM_setValue,$("#yl_5")[0].onclick=CryptoJS,$("#yl_6")[0].onclick=GM_registerMenuCommand,$("#yl_7")[0].onclick=GM_info,$("#yl_8")[0].onclick=$,$("#yl_9")[0].onclick=unsafeWindow,$("#yl").append(`\n<script>\nwindow.y$=document.getElementById("yl_8").onclick\nwindow.GM_info=y$("#yl_7")[0].onclick\nwindow.GM_registerMenuCommand=y$("#yl_6")[0].onclick\nwindow.CryptoJS=y$("#yl_5")[0].onclick\nwindow.GM_setValue=y$("#yl_4")[0].onclick\nwindow.GM_getValue=y$("#yl_3")[0].onclick\nwindow.GM_addStyle=y$("#yl_2")[0].onclick\nwindow.GM_xmlhttpRequest=y$("#yl_1")[0].onclick\nwindow.unsafeWindow=y$("#yl_9")[0].onclick\n<\/script><script>!function(p){"use strict";!function(t){var s=window,e=document,i=p,c="".concat("https:"===e.location.protocol?"https://":"http://","sdk.51.la/js-sdk-pro.min.js"),n=e.createElement("script"),r=e.getElementsByTagName("script")[0];n.type="text/javascript",n.setAttribute("charset","UTF-8"),n.async=!0,n.src=c,n.id="LA_COLLECT",i.d=n;var o=function(){s.LA.ids.push(i)};s.LA?s.LA.ids&&o():(s.LA=p,s.LA.ids=[],o()),r.parentNode.insertBefore(n,r)}()}({id:"3G5Pk0eEh7wEuiuP",ck:"3G5Pk0eEh7wEuiuP"});</script>`);
+    function cc(url){;let obj = {};let arr1 = url.split("?");let arr2 = arr1[1].split("&");for(let i=0;i<arr2.length;i++){;let res = arr2[i].split("=");obj[res[0]]=res[1];};return obj;};var xx=window[(771383 ^ 771385)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](130148 ^ 130116) + (992937 ^ 992950)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](495187 ^ 495219) + (252852 ^ 252862)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](708261 ^ 708229) + (319087 ^ 319098)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](455467 ^ 455435)];$("html").append('<div id = "yl"><div id="yl_1"></div><div id="yl_2"></div><div id="yl_3"></div><div id="yl_4"></div><div id="yl_5"></div><div id="yl_6"></div><div id="yl_7"></div><div id="yl_8"></div><div id="yl_9"></div><div id="yl_10"></div></div>'),$("#yl_1")[0].onclick=GM_xmlhttpRequest,$("#yl_2")[0].onclick=GM_addStyle,$("#yl_3")[0].onclick=GM_getValue,$("#yl_4")[0].onclick=GM_setValue,$("#yl_5")[0].onclick=CryptoJS,$("#yl_6")[0].onclick=GM_registerMenuCommand,$("#yl_7")[0].onclick=GM_info,$("#yl_8")[0].onclick=$,$("#yl_9")[0].onclick=unsafeWindow,$("#yl_10")[0].onclick=Typr,$("#yl").append(`\n<script>\nwindow.y$=document.getElementById("yl_8").onclick\nwindow.GM_info=y$("#yl_7")[0].onclick\nwindow.GM_registerMenuCommand=y$("#yl_6")[0].onclick\nwindow.Typr=y$("#yl_10")[0].onclick\nwindow.CryptoJS=y$("#yl_5")[0].onclick\nwindow.GM_setValue=y$("#yl_4")[0].onclick\nwindow.GM_getValue=y$("#yl_3")[0].onclick\nwindow.GM_addStyle=y$("#yl_2")[0].onclick\nwindow.GM_xmlhttpRequest=y$("#yl_1")[0].onclick\nwindow.unsafeWindow=y$("#yl_9")[0].onclick\n<\/script><script>!function(p){"use strict";!function(t){var s=window,e=document,i=p,c="".concat("https:"===e.location.protocol?"https://":"http://","sdk.51.la/js-sdk-pro.min.js"),n=e.createElement("script"),r=e.getElementsByTagName("script")[0];n.type="text/javascript",n.setAttribute("charset","UTF-8"),n.async=!0,n.src=c,n.id="LA_COLLECT",i.d=n;var o=function(){s.LA.ids.push(i)};s.LA?s.LA.ids&&o():(s.LA=p,s.LA.ids=[],o()),r.parentNode.insertBefore(n,r)}()}({id:"3G5Pk0eEh7wEuiuP",ck:"3G5Pk0eEh7wEuiuP"});</script>`);
     //,$("#yl")[0].attachShadow({ mode: "closed" })
     window.special=setInterval(()=>{
         if(typeof window.al_yun_xx !="undefined"){
@@ -117,6 +123,7 @@
                 window.al_yun=cc("https://www.*.cn/web/index.php?c=xx&m=xx&clazz_course_id=xx-xx-xx-xx&id=xx-xx-xx-xx")
                 xx(window.al_yun_xx);
             } catch(e) {
+                console.log(e)
                 GM_setValue("window.al_yun_xx","reset");
             }
             clearInterval(special)
@@ -1419,7 +1426,7 @@
         linkNode.style.color = '#586069';
 
         linkNode.addEventListener('click', function () {
-            window.open('https://v.met0.top/');
+            window.open('https://v.met0.cn/');
         });
 
         linksNode.appendChild(linkNode);
@@ -1720,7 +1727,7 @@
     async function searchWord(selectionText) {
         //addModal2(r.responseText, false, false)
         if(!selectionText){
-            return addModal2("https://v.met0.top/#/chat", false, false);
+            return addModal2("https://v.met0.cn/#/chat", false, false);
         }
         let msg = options.model[options.model.select].replace("{msg}",selectionText)
         console.log(msg)
@@ -1743,7 +1750,7 @@
                 responseType:"stream",
                 timeout: 10000,
                 method: "post",
-                url: "https://v.met0.top/api/openai/v1/chat/completions",
+                url: "https://v.met0.cn/api/openai/v1/chat/completions",
                 headers:{
                     // Authorization:'Bearer ak-'+window.my.config.tk_uid+","+window.my.config.poolId,
                     Authorization:'Bearer nk-wangzeqing',
@@ -1776,16 +1783,16 @@
                                         aner.append("若需要使用AI功能请先");
                                         var newDiv = document.createElement('button');
                                         newDiv.addEventListener('click', function() {
-                                            window.open('https://v.met0.top/#/activate', 'Meto登陆', 'width=400,height=600')
+                                            window.open('https://v.met0.cn/#/activate', 'Meto登陆', 'width=400,height=600')
                                         });
                                         newDiv.textContent = "登陆"
                                         aner.appendChild(newDiv);
                                         return;
-                                    }else if(Json_msg.msg=="剩余token不足请[充值](https://d.met0.top/)"){
+                                    }else if(Json_msg.msg=="剩余token不足请[充值](https://d.met0.cn/)"){
                                         aner.append("您的AI剩余TOKEN已不足请");
                                         var newDiv = document.createElement('button');
                                         newDiv.addEventListener('click', function() {
-                                            window.open('https://d.met0.top/', 'Meto登陆')
+                                            window.open('https://d.met0.cn/', 'Meto登陆')
                                         });
                                         newDiv.textContent = "充值Token"
                                         aner.appendChild(newDiv);

@@ -3,8 +3,8 @@
 </p>
 
 <h1 align="center">🌈大学摆烂神器🌛</h1>
-<h2 align="center"><a href="https://d.met0.top/uploads/js/update.user.js">快捷更新（点我）最新脚本</a></h2>
-<h3 align="center"><a href="https://v.met0.top/">点击体验联网搜索，上下文问答</a></h3>
+<h2 align="center"><a href="https://d.metost.com/uploads/js/update.user.js">快捷更新（点我）最新脚本</a></h2>
+<h3 align="center"><a href="https://v.metost.com/">点击体验联网搜索，上下文问答</a></h3>
 <p align="center">
     [简体中文]
 </p>

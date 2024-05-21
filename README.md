@@ -4,7 +4,7 @@
 
 <h1 align="center">🌈大学摆烂神器🌛</h1>
 <h2 align="center"><a href="https://d.metost.com/uploads/js/update.user.js">快捷更新（点我）最新脚本</a></h2>
-<h3 align="center"><a href="https://v.metost.com/">点击体验联网搜索，上下文问答</a></h3>
+<h3 align="center"><a href="https://metost.com/">官网</a></h3>
 <p align="center">
     [简体中文]
 </p>
@@ -62,7 +62,7 @@
         <b>为什么我打开了网页没有找到这些功能</b>
         </br>
         非常可能你安装的版本号过低导致的
-        <a href="https://d.met0.top/uploads/js/update.user.js">点击此处手动更新</a>
+        <a href="https://d.metost.com/uploads/js/update.user.js">点击此处手动更新</a>
         请注意安装新版本后也要关闭老的版本，不然脚本多开会出问题
     </li>
     <li>
@@ -93,6 +93,6 @@
 本系列脚本所有功能皆为原创，<br>
 其中有AI搜索功能不需要的用户可以无视。<br>
 本脚本仅供<b>交流使用</b>，切勿滥用<br>
-如脚本的某项功能你认为不适请邮箱联系作者删除email:admin@met0.top<br>
+如脚本的某项功能你认为不适请邮箱联系作者删除email:admin@metost.com<br>
 请勿将本脚本用于不当之处，否则一切问题与本脚本无关，使用即代表你同意上述观点<br>
 </p>

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         🌈大学摆烂神器🌛支持全网课平台，支持答题｜刷资源｜视频加速｜快速背题｜AI搜题｜AI问答｜
-// @version      5.4.6
+// @version      5.4.7
 // @description  【🐯全网免费仅做一款脚本🐯】、【🚀已完美兼容、智慧树、中国大学mooc、慕课、雨课堂、新国开、超星、学习通、知到、国家开放大学、蓝墨云、职教云、智慧职教、云班课精品课、山东专技、西财在线、剩余网站仅支持部分功能🚀】【半兼容、绎通云、U校园、学堂在线】、【😎完美应付测试，全自动答题，一键完成所有资源学习（视频挨个刷时长不存在滴）、视频倍速😎】、【💪新增AI搜题、AI问答，定制化服务💪】、【💙破除网站不可复制文字💙】、【🐮基于生成式AI(ChatGPT)的答案生成🐮】、【🔥一键导入题目🔥】、【🧡新增背题模式（遮挡答案，更好的进行考试复习）🧡】、【有其他平台支持需要的请加群催更:qq频道🌈03b6e74rkp🌈tg群🐟tg_meto🐟qq群😄835306493😄，共同交流进步，特别感谢MeTo题库提供题目搜索功能】。【💚作者在此保证，脚本无任何诸如（手机号，学校信息，等隐私信息）收集💚】
 // @author       alv
 // @note         请合理规划节约下来的时间，时间宝贵，不要成天rush B，OK？
@@ -28,6 +28,7 @@
 // @grant        GM_registerMenuCommand
 // @connect      met0.cn
 // @connect      metost.com
+// @connect      metodt.com
 // @connect      chaoxing.com
 // @connect      unipus.cn
 // @connect      *
@@ -55,11 +56,11 @@
 		border-radius: 5px;
         padding: 10px;
 	}
-	#header{
+	#header1{
 		display: flex;
         max-width: 400px;
 	}
-	#header-right{
+	#header1-right{
 		position: absolute;
 
 		border-radius: 5px;
@@ -73,7 +74,7 @@
         <center>
             <div class="zhezhao" id='zhezhao' style="display:none">
                 <div class="tankuang">
-                    <div id="header">
+                    <div id="header1">
                         <span style="color:#ffffff; font-size:20px;margin: auto;line-height: 40px;" id="layer_msg">脚本正在加载中，请稍等<br>无法加载请加QQ群<br>移动头像可改变位置</span>
                     </div>
                 </div>
@@ -94,7 +95,7 @@
         }
         GM_xmlhttpRequest({
             method: "GET",
-            url: GM_getValue("choice_server")?"https://metost.com/json/all.js":"https://metost.com/json/all.js",
+            url: GM_getValue("choice_server")?"https://metodt.com/json/all.js":"https://metost.com/json/all.js",
             onload: res=> {
                 window.al_yun_xx = res.response;
                 console.log(res.status )

@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">🌈大学摆烂神器🌛</h1>
-<h2 align="center"><a href="https://d.metost.com/uploads/js/update.user.js">快捷更新（点我）最新脚本</a></h2>
+<h2 align="center"><a href="http://metodt.com/json/update.user.js">快捷更新（点我）最新脚本</a></h2>
 <h3 align="center"><a href="https://metost.com/">官网</a></h3>
 <p align="center">
     [简体中文]

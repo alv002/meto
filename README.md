@@ -1,3 +1,4 @@
+本项目的 CDN 加速和安全防护由腾讯 EdgeOne 赞助
 <p align="center">
   <img width="15%" src="https://i.jpg.dog/8a4f4bd4c5ea7b1eff20a2978885f2b1.jpeg">
 </p>

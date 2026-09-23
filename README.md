@@ -4,7 +4,8 @@
 
 <h1 align="center">🌈大学摆烂神器🌛</h1>
 <h2 align="center"><a href="https://m.metst.cn/json/update.user.js">快捷更新（点我）最新脚本</a></h2>
-<h3 align="center"><a href="http://doc.metst.cn/">官网</a></h3>
+<p align="center"><a href="https://m.metodt.com/json/update.user.js">备用更新地址</a></p>
+<h3 align="center"><a href="https://doc.metst.cn/">官网</a> ｜ <a href="https://doc.metodt.com/">备用官网</a></h3>
 <p align="center">
     [简体中文]
 </p>
@@ -12,14 +13,14 @@
     ｜支持答题｜刷资源｜视频加速｜快速背题｜AI搜题｜AI问答｜
 </p>
 <p align="center">
-    <img src="https://img.shields.io/badge/dynamic/json?color=informational&amp;prefix=v&amp;label=release&amp;query=%24.data.script.version&amp;url=https%3A%2F%2Fscriptcat.org%2Fapi%2Fv1%2Fscripts%2F72" alt="release">
-    <img src="https://img.shields.io/badge/dynamic/json?color=informational&amp;label=ScriptCat&amp;query=%24.data.today_install&amp;url=https%3A%2F%2Fscriptcat.org%2Fapi%2Fv1%2Fscripts%2F72" alt="ScriptCat">
+    <img src="https://img.shields.io/badge/release-v5.3.47-informational.svg" alt="release">
+    <img src="https://img.shields.io/github/last-commit/alv002/meto" alt="last commit">
     <img src="https://img.shields.io/badge/tamperMonkey-v4.8-brightgreen.svg" alt="tampermonkey">
     <img src="https://img.shields.io/badge/chrome%20x64-v76.0-brightgreen.svg" alt="chrome">
     <img src="https://img.shields.io/badge/safari%20-v12.0-brightgreen.svg" alt="safari">
     <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Mac%20%7C%20Android-blue.svg" alt="platform">
 </p>
-<h3>🔧 <a href="" rel="nofollow">插件功能</a></h3>
+<h3>🔧 插件功能</h3>
 <ul>
     <li>✅ 自动搜索答案</li>
     <li>✅ 自动填写答案</li>
@@ -31,7 +32,7 @@
     <li>✅ 一键完成所有资源</li>
     <li>✅ 允许复制文字</li>
 </ul>
-<h3>🦄️ <a href="" rel="nofollow">平台支持详情（默认全部平台都支持 -> 单题搜索、AI功能、视频倍数）</a></h3>
+<h3>🦄️ 平台支持详情（默认全部平台都支持 -> 单题搜索、AI功能、视频倍数）</h3>
 <h5>
     ps.不支持快捷登录就手动登录，不然就无法使用搜题功能和ai，只能使用刷课功能（！需要保证安装的脚本为最新脚本！）
 </h5>
@@ -49,7 +50,7 @@
     <li><b>[....]如有更多平台或功能需要支持请联系作者</b></li>
 </ul>
 
-<h3>❓ <a href="" rel="nofollow">常见问题</a></h3>
+<h3>❓ 常见问题</h3>
 <ul>
     <li>
         <b>无法进行手动登录</b>
@@ -62,7 +63,7 @@
         <b>为什么我打开了网页没有找到这些功能</b>
         </br>
         非常可能你安装的版本号过低导致的
-        <a href="https://d.metost.com/uploads/js/update.user.js">点击此处手动更新</a>
+        <a href="https://m.metst.cn/json/update.user.js">点击此处手动更新</a>（<a href="https://m.metodt.com/json/update.user.js">备用地址</a>）
         请注意安装新版本后也要关闭老的版本，不然脚本多开会出问题
     </li>
     <li>
@@ -78,7 +79,7 @@
 
 </ul>
 
-<h3>📃 <a href="" rel="nofollow">用户须知</a></h3>
+<h3>📃 用户须知</h3>
 <ul>
 <li>This script, without any fee, no need to fill in any form of token or secret key</li>
 <li>该脚本不需要填写任何形式的令牌或密钥</li>
@@ -93,6 +94,6 @@
 本系列脚本所有功能皆为原创，<br>
 其中有AI搜索功能不需要的用户可以无视。<br>
 本脚本仅供<b>交流使用</b>，切勿滥用<br>
-如脚本的某项功能你认为不适请邮箱联系作者删除email:admin@metost.com<br>
+如脚本的某项功能你认为不适请通过 <a href="https://github.com/alv002/meto/issues">GitHub Issues</a> 联系作者删除<br>
 请勿将本脚本用于不当之处，否则一切问题与本脚本无关，使用即代表你同意上述观点<br>
 </p>
